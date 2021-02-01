@@ -14,53 +14,75 @@ using Telegram.Bot.Types.ReplyMarkups;
 
 namespace BlindDateBot.Behavior.RegistrationStages
 {
-    public class InterlocuterGenderReceived : IRegistrationTransactionState
+    internal class InterlocuterGenderReceived : IRegistrationTransactionState
     {
-        public async Task ProcessTransaction(Message message, object transaction, ITelegramBotClient botClient, ILogger logger, IDatabase db)
+        public async Task ProcessTransaction(
+            Message message,
+            object transaction,
+            ITelegramBotClient botClient,
+            ILogger logger,
+            IDatabase db)
         {
             var currentTransaction = transaction as RegistrationTransactionModel;
 
+            ValidateInputAndUpdateUserModel(message,
+                                            currentTransaction,
+                                            botClient,
+                                            logger,
+                                            db);
+
+            // TODO: Generate normal message
+            var sb = new StringBuilder();
+            sb.Append(string.Format(Messages.ConfirmData,
+                                    currentTransaction.User.Gender.ToString(),
+                                    currentTransaction.User.InterlocutorGender.ToString()));
+
+            await botClient.SendTextMessageAsync(currentTransaction.RecepientId, sb.ToString(), replyMarkup: CreateReplyKeyboard());
+            currentTransaction.TransactionState = new ConfirmationReceived();
+        }
+
+        private static async void ValidateInputAndUpdateUserModel(
+            Message message,
+            RegistrationTransactionModel transaction,
+            ITelegramBotClient botClient,
+            ILogger logger,
+            IDatabase db)
+        {
             if (message?.Text == null || !int.TryParse(message.Text, out int genderId))
             {
-                await botClient.SendTextMessageAsync(currentTransaction.RecepientId, Messages.SomethingWentWrong);
+                await botClient.SendTextMessageAsync(transaction.RecepientId, Messages.SomethingWentWrong);
 
-                currentTransaction.TransactionState = new RegistrationInitiated();
-                await currentTransaction.TransactionState.ProcessTransaction(message, transaction, botClient, logger, db);
+                transaction.TransactionState = new RegistrationInitiated();
+                await transaction.TransactionState.ProcessTransaction(message, transaction, botClient, logger, db);
                 return;
             }
 
             if (genderId == 0)
             {
-                currentTransaction.User.InterlocutorGender = Gender.Male;
+                transaction.User.InterlocutorGender = Gender.Male;
             }
             else if (genderId == 1)
             {
-                currentTransaction.User.InterlocutorGender = Gender.Female;
+                transaction.User.InterlocutorGender = Gender.Female;
             }
 
-            var sb = new StringBuilder();
-
-            var user = currentTransaction.User;
-
-            sb.Append(string.Format(Messages.ConfirmData, user.Gender.ToString(), user.InterlocutorGender.ToString()));
-
-            var keyboard = new InlineKeyboardMarkup(new[]
+        }
+    
+        private static InlineKeyboardMarkup CreateReplyKeyboard()
+        {
+            return new InlineKeyboardMarkup(new[]
             {
                 new InlineKeyboardButton()
                 {
-                    Text = "Да",
+                    Text = Messages.Yes,
                     CallbackData = "1"
                 },
                 new InlineKeyboardButton()
                 {
-                    Text = "Нет",
+                    Text = Messages.No,
                     CallbackData = "0"
                 }
             });
-
-            await botClient.SendTextMessageAsync(currentTransaction.RecepientId, sb.ToString(), replyMarkup: keyboard);
-
-            currentTransaction.TransactionState = new ConfirmationReceived();
         }
     }
 }

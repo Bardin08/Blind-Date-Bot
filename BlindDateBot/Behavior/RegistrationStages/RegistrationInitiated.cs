@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 
 using BlindDateBot.Data.Interfaces;
 using BlindDateBot.Models;
@@ -14,11 +13,25 @@ namespace BlindDateBot.Behavior.RegistrationStages
 {
     public class RegistrationInitiated : Interfaces.IRegistrationTransactionState
     {
-        public async Task ProcessTransaction(Message message, object transaction, ITelegramBotClient botClient, ILogger logger, IDatabase db)
+        public async Task ProcessTransaction(
+            Message message,
+            object transaction,
+            ITelegramBotClient botClient,
+            ILogger logger,
+            IDatabase db)
         {
             var currentTransaction = transaction as RegistrationTransactionModel;
 
-            var keyboard = new InlineKeyboardMarkup(new[]
+            await botClient.SendTextMessageAsync(currentTransaction.RecepientId,
+                                                 Messages.RegistrationInitMessage,
+                                                 replyMarkup: CreateReplyKeyboard());
+
+            currentTransaction.TransactionState = new GenderReceived();
+        }
+
+        private static InlineKeyboardMarkup CreateReplyKeyboard()
+        {
+            return new InlineKeyboardMarkup(new[]
             {
                 new InlineKeyboardButton()
                 {
@@ -30,12 +43,7 @@ namespace BlindDateBot.Behavior.RegistrationStages
                     CallbackData = "1",
                     Text = Messages.Female
                 }
-
             });
-
-            await botClient.SendTextMessageAsync(currentTransaction.RecepientId, Messages.RegistrationInitMessage, replyMarkup: keyboard);
-
-            currentTransaction.TransactionState = new GenderReceived();
         }
     }
 }

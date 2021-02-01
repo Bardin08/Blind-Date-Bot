@@ -132,6 +132,9 @@
   <data name="Male" xml:space="preserve">
     <value>Мужской</value>
   </data>
+  <data name="No" xml:space="preserve">
+    <value>Нет</value>
+  </data>
   <data name="RegistrationComplete" xml:space="preserve">
     <value>U`re successfully registrate</value>
   </data>
@@ -144,5 +147,8 @@
   </data>
   <data name="SomethingWentWrong" xml:space="preserve">
     <value>Smth went wrong. Try again</value>
+  </data>
+  <data name="Yes" xml:space="preserve">
+    <value>Да</value>
   </data>
 </root>

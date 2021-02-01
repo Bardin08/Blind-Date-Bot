@@ -13,31 +13,59 @@ using Telegram.Bot.Types.ReplyMarkups;
 
 namespace BlindDateBot.Behavior.RegistrationStages
 {
-    public class GenderReceived : IRegistrationTransactionState
+    internal class GenderReceived : IRegistrationTransactionState
     {
-        public async Task ProcessTransaction(Message message, object transaction, ITelegramBotClient botClient, ILogger logger, IDatabase db)
+        public async Task ProcessTransaction(
+            Message message,
+            object transaction,
+            ITelegramBotClient botClient,
+            ILogger logger,
+            IDatabase db)
         {
             var currentTransaction = transaction as RegistrationTransactionModel;
 
+            ValidateInputAndUpdateModel(message,
+                                        currentTransaction,
+                                        botClient,
+                                        logger,
+                                        db);
+
+            await botClient.SendTextMessageAsync(currentTransaction.RecepientId,
+                                                 Messages.SelectInterlocuterGender,
+                                                 replyMarkup: CreateReplyKeyboard());
+
+            currentTransaction.TransactionState = new InterlocuterGenderReceived();
+        }
+
+        private static async void ValidateInputAndUpdateModel(
+            Message message,
+            RegistrationTransactionModel transaction,
+            ITelegramBotClient botClient,
+            ILogger logger,
+            IDatabase db)
+        {
             if (message?.Text == null || !int.TryParse(message.Text, out int genderId))
             {
-                await botClient.SendTextMessageAsync(currentTransaction.RecepientId, Messages.SomethingWentWrong);
+                await botClient.SendTextMessageAsync(transaction.RecepientId, Messages.SomethingWentWrong);
 
-                currentTransaction.TransactionState = new RegistrationInitiated();
-                await currentTransaction.TransactionState.ProcessTransaction(message, transaction, botClient, logger, db);
+                transaction.TransactionState = new RegistrationInitiated();
+                await transaction.TransactionState.ProcessTransaction(message, transaction, botClient, logger, db);
                 return;
             }
 
             if (genderId == 0)
             {
-                currentTransaction.User.Gender = Gender.Male;
+                transaction.User.Gender = Gender.Male;
             }
             else if (genderId == 1)
             {
-                currentTransaction.User.Gender = Gender.Female;
+                transaction.User.Gender = Gender.Female;
             }
+        }
 
-            var keyboard = new InlineKeyboardMarkup(new[]
+        private static InlineKeyboardMarkup CreateReplyKeyboard()
+        {
+            return new InlineKeyboardMarkup(new[]
             {
                 new InlineKeyboardButton()
                 {
@@ -49,12 +77,7 @@ namespace BlindDateBot.Behavior.RegistrationStages
                     CallbackData = "1",
                     Text = Messages.Female
                 }
-
             });
-
-            await botClient.SendTextMessageAsync(currentTransaction.RecepientId, Messages.SelectInterlocuterGender, replyMarkup: keyboard);
-
-            currentTransaction.TransactionState = new InterlocuterGenderReceived();
         }
     }
 }
