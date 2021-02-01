@@ -2,6 +2,7 @@
 using System.Threading;
 
 using BlindDateBot.Interfaces;
+using BlindDateBot.Models;
 using BlindDateBot.Options;
 
 using Telegram.Bot;
@@ -14,10 +15,14 @@ namespace BlindDateBot
         private readonly ITelegramBotClient _botClient;
         private readonly BlindDateBotOptions _options;
 
+        private IMessageProcessingStrategy _messageProcessor;
+
         public BlindDateBot(IBlindDateBotClient botClient)
         {
             _botClient = botClient.BotClient;
             _options = botClient.Options;
+
+            _messageProcessor = new Strategies.CommandProcessStrategy();
         }
 
         public void Execute()
@@ -30,7 +35,7 @@ namespace BlindDateBot
 
         private async void MessageReceived(object sender, MessageEventArgs e)
         {
-            await _botClient.SendTextMessageAsync(e.Message.From.Id, e.Message.Text);
+            await _messageProcessor.ProcessTransaction(e.Message, new CommandTransaction(e.Message.From.Id), _botClient);
         }
     }
 }
