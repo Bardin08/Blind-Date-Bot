@@ -9,11 +9,15 @@ namespace BlindDateBot.Commands
 {
     public class StartCommand : IBotCommand
     {
-        public string Name { get => "/start"; }
+        public static event Delegates.RegistrationInitiatedHandler RegistrationInitiated;
 
-        public async Task Execute(Message messages, object transaction, ITelegramBotClient botClient)
+        public string Name => "/start";
+
+        public async Task Execute(Message message, object transaction, ITelegramBotClient botClient)
         {
-            await botClient.SendTextMessageAsync(messages.From.Id, messages.Text);
+            var registrationTransaction = new Models.RegistrationTransactionModel(message.From.Id, message.From.Username, message.From.FirstName);
+            RegistrationInitiated.Invoke(registrationTransaction);
+            return;
         }
     }
 }

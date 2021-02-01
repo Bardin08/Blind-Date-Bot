@@ -9,6 +9,6 @@ namespace BlindDateBot.Interfaces
     {
         public string Name { get; }
 
-        public Task Execute(Message messages, object transaction, ITelegramBotClient botClient);
+        public Task Execute(Message message, object transaction, ITelegramBotClient botClient);
     }
 }

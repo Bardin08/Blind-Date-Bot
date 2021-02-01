@@ -61,11 +61,83 @@ namespace BlindDateBot {
         }
         
         /// <summary>
-        ///   Ищет локализованную строку, похожую на &quot;Ошибка распознавание команды&quot;.
+        ///   Ищет локализованную строку, похожую на Ошибка распознавание команды.
         /// </summary>
         internal static string CommandNotFoundMessage {
             get {
                 return ResourceManager.GetString("CommandNotFoundMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на Gender: {0}, \r\nInterlocuter gender: {1}.
+        /// </summary>
+        internal static string ConfirmData {
+            get {
+                return ResourceManager.GetString("ConfirmData", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на Женский.
+        /// </summary>
+        internal static string Female {
+            get {
+                return ResourceManager.GetString("Female", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на Найти свидание.
+        /// </summary>
+        internal static string FindDate {
+            get {
+                return ResourceManager.GetString("FindDate", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на Мужской.
+        /// </summary>
+        internal static string Male {
+            get {
+                return ResourceManager.GetString("Male", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на U`re successfully registrate.
+        /// </summary>
+        internal static string RegistrationComplete {
+            get {
+                return ResourceManager.GetString("RegistrationComplete", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на Registration begin.
+        /// </summary>
+        internal static string RegistrationInitMessage {
+            get {
+                return ResourceManager.GetString("RegistrationInitMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на Select interlocuter gender.
+        /// </summary>
+        internal static string SelectInterlocuterGender {
+            get {
+                return ResourceManager.GetString("SelectInterlocuterGender", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на Smth went wrong. Try again.
+        /// </summary>
+        internal static string SomethingWentWrong {
+            get {
+                return ResourceManager.GetString("SomethingWentWrong", resourceCulture);
             }
         }
     }

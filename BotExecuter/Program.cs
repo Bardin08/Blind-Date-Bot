@@ -28,7 +28,6 @@ namespace BotExecuter
                 {
                     s.AddSingleton<IBlindDateBotClient>(new BlindDataBotClient(builder.Build()));
                     s.AddSingleton<BlindDateBot.BlindDateBot>();
-
                 })
                 .UseSerilog()
                 .Build();

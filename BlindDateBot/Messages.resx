@@ -118,6 +118,31 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="CommandNotFoundMessage" xml:space="preserve">
-    <value>"Ошибка распознавание команды"</value>
+    <value>Ошибка распознавание команды</value>
+  </data>
+  <data name="ConfirmData" xml:space="preserve">
+    <value>Gender: {0}, \r\nInterlocuter gender: {1}</value>
+  </data>
+  <data name="Female" xml:space="preserve">
+    <value>Женский</value>
+  </data>
+  <data name="FindDate" xml:space="preserve">
+    <value>Найти свидание</value>
+  </data>
+  <data name="Male" xml:space="preserve">
+    <value>Мужской</value>
+  </data>
+  <data name="RegistrationComplete" xml:space="preserve">
+    <value>U`re successfully registrate</value>
+  </data>
+  <data name="RegistrationInitMessage" xml:space="preserve">
+    <value>Registration begin</value>
+    <comment>+ SelectGenderMessage</comment>
+  </data>
+  <data name="SelectInterlocuterGender" xml:space="preserve">
+    <value>Select interlocuter gender</value>
+  </data>
+  <data name="SomethingWentWrong" xml:space="preserve">
+    <value>Smth went wrong. Try again</value>
   </data>
 </root>

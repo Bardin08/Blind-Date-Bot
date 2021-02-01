@@ -2,10 +2,13 @@
 
 namespace BlindDateBot.Models
 {
-    public class TransactionBase
+    public class TransactionBaseModel
     {
-        public TransactionBase()
+        public TransactionBaseModel(int transactionId)
         {
+            TransactionId = RecepientId = transactionId;
+            IsComplete = false;
+    
             MessageIds = new();
         }
 
