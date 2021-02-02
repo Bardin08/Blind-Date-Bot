@@ -2,8 +2,10 @@
 using System.IO;
 
 using BlindDateBot;
+using BlindDateBot.Data.Contexts;
 using BlindDateBot.Interfaces;
 
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -14,7 +16,7 @@ namespace BotExecuter
 {
     class Program
     {
-        static void Main(string[] args)
+        static void Main()
         {
             var builder = new ConfigurationBuilder();
             BuildConfiguration(builder);
@@ -28,6 +30,11 @@ namespace BotExecuter
                 {
                     s.AddSingleton<IBlindDateBotClient>(new BlindDataBotClient(builder.Build()));
                     s.AddSingleton<BlindDateBot.BlindDateBot>();
+
+                    s.AddDbContext<SqlServerContext>(options =>
+                    {
+                        options.UseSqlServer(builder.Build().GetSection("DB:MsSqlDb")["ConnectionString"]);
+                    });
                 })
                 .UseSerilog()
                 .Build();
