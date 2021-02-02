@@ -24,7 +24,7 @@ namespace BlindDateBot
 
         private readonly ILogger _logger;
 
-        private IMessageProcessingStrategy _transactionProcessor;
+        private IMessageProcessingStrategy _transactionsProcessor;
         private List<object> _transactions;
 
 
@@ -35,7 +35,7 @@ namespace BlindDateBot
 
             _logger = logger;
 
-            _transactionProcessor = new Strategies.CommandProcessStrategy();
+            _transactionsProcessor = new Strategies.CommandProcessStrategy();
             _transactions = new();
         }
 
@@ -63,8 +63,8 @@ namespace BlindDateBot
         {
             _transactions.Add(t);
 
-            _transactionProcessor = new Strategies.RegistrationProcessStrategy();
-            await _transactionProcessor.ProcessTransaction(new Message(), t, _botClient, _logger, null);
+            _transactionsProcessor = new Strategies.RegistrationProcessStrategy();
+            await _transactionsProcessor.ProcessTransaction(new Message(), t, _botClient, _logger, null);
         }
 
         private async void MessageReceived(object sender, MessageEventArgs e)
@@ -74,14 +74,30 @@ namespace BlindDateBot
 
         private async Task ProcessMessage(Message message)
         {
-            RemoveCompletedTransactions();
+            object userTransaction = _transactions.Find(transaction => (transaction as TransactionBaseModel)?.RecepientId == message.From.Id);
 
-            var t = _transactions.FirstOrDefault(x => (x as TransactionBaseModel).RecepientId == message.From.Id);
+            if (message.Text?.StartsWith("/") == true)
+            {
+                _transactionsProcessor = new Strategies.CommandProcessStrategy();
+                userTransaction = new CommandTransactionModel(message.From.Id);
+            }
+            else if (userTransaction != null)
+            {
+                _transactionsProcessor = SelectStrategy(userTransaction as TransactionBaseModel);
+            }
 
-            if (t != null)
-                await _transactionProcessor.ProcessTransaction(message, t, _botClient, _logger, null);
-            else
-                await _transactionProcessor.ProcessTransaction(message, new CommandTransactionModel(message.From.Id), _botClient, _logger, null);
+            await _transactionsProcessor.ProcessTransaction(message, userTransaction, _botClient, _logger, null);
+        }
+
+        private static IMessageProcessingStrategy SelectStrategy(TransactionBaseModel transaction)
+        {
+            return (transaction.TransactionType) switch
+            {
+                Models.Enums.TransactionType.DataMessaging => new Strategies.RegistrationProcessStrategy(),
+                Models.Enums.TransactionType.Command => new Strategies.CommandProcessStrategy(),
+                Models.Enums.TransactionType.Registration => new Strategies.RegistrationProcessStrategy(),
+                _ => throw new NotImplementedException(),    
+            };
         }
 
         private void RemoveCompletedTransactions()
