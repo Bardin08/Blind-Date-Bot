@@ -4,7 +4,7 @@
     {
         public CommandTransactionModel(int transactionId) : base(transactionId)
         {
-            TransactionType = "CommandTransaction";
+            TransactionType = Enums.TransactionType.Command;
         }
     }
 }
