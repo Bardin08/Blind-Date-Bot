@@ -7,6 +7,7 @@ namespace BlindDateBot.Domain.Models
     public class UserModel
     {
         public int Id { get; set; }
+        public int TelegramId { get; set; }
         public string Username { get; set; }
         public Gender Gender { get; set; }
         public Gender InterlocutorGender{ get; set; }
@@ -15,19 +16,19 @@ namespace BlindDateBot.Domain.Models
         public override bool Equals(object obj)
         {
             return obj is UserModel model &&
-                   Id == model.Id &&
+                   TelegramId == model.TelegramId &&
                    Username == model.Username &&
                    Gender == model.Gender;
         }
 
         public override int GetHashCode()
         {
-            return HashCode.Combine(Id, Username, Gender);
+            return HashCode.Combine(TelegramId, Username, Gender);
         }
 
         public override string ToString()
         {
-            return $"User({GetHashCode()}): {Username}[({Id}),{(Gender == Gender.Male ? "Male" : "Female" )}]";
+            return $"User({GetHashCode()}): {Username}[({TelegramId}),{(Gender == Gender.Male ? "Male" : "Female" )}]";
         }
     }
 }
