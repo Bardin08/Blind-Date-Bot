@@ -79,6 +79,24 @@ namespace BlindDateBot {
         }
         
         /// <summary>
+        ///   Ищет локализованную строку, похожую на Date has began.
+        /// </summary>
+        internal static string DateHasBegan {
+            get {
+                return ResourceManager.GetString("DateHasBegan", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на Date search began.
+        /// </summary>
+        internal static string DateSearchText {
+            get {
+                return ResourceManager.GetString("DateSearchText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Ищет локализованную строку, похожую на Женский.
         /// </summary>
         internal static string Female {
@@ -93,6 +111,24 @@ namespace BlindDateBot {
         internal static string FindDate {
             get {
                 return ResourceManager.GetString("FindDate", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на Interlocutor not found. You&apos;ll be notified when I find somebody for you.
+        /// </summary>
+        internal static string InterlocutorNotFound {
+            get {
+                return ResourceManager.GetString("InterlocutorNotFound", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на Sorry, smth went wrong. Try to use /start command again..
+        /// </summary>
+        internal static string InternalErrorUserNotFound {
+            get {
+                return ResourceManager.GetString("InternalErrorUserNotFound", resourceCulture);
             }
         }
         

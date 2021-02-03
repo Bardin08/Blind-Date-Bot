@@ -123,11 +123,23 @@
   <data name="ConfirmData" xml:space="preserve">
     <value>Gender: {0}, \r\nInterlocuter gender: {1}</value>
   </data>
+  <data name="DateHasBegan" xml:space="preserve">
+    <value>Date has began</value>
+  </data>
+  <data name="DateSearchText" xml:space="preserve">
+    <value>Date search began</value>
+  </data>
   <data name="Female" xml:space="preserve">
     <value>Женский</value>
   </data>
   <data name="FindDate" xml:space="preserve">
     <value>Найти свидание</value>
+  </data>
+  <data name="InterlocutorNotFound" xml:space="preserve">
+    <value>Interlocutor not found. You'll be notified when I find somebody for you</value>
+  </data>
+  <data name="InternalErrorUserNotFound" xml:space="preserve">
+    <value>Sorry, smth went wrong. Try to use /start command again.</value>
   </data>
   <data name="Male" xml:space="preserve">
     <value>Мужской</value>
