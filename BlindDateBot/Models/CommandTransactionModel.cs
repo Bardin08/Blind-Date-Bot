@@ -2,7 +2,7 @@
 {
     public class CommandTransactionModel : TransactionBaseModel
     {
-        public CommandTransactionModel(int transactionId) : base(transactionId)
+        public CommandTransactionModel(int recepientId) : base(recepientId)
         {
             TransactionType = Enums.TransactionType.Command;
         }

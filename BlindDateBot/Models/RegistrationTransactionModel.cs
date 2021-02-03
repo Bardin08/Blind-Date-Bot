@@ -12,17 +12,16 @@ namespace BlindDateBot.Models
         
         public IRegistrationTransactionState TransactionState { get; set; }
 
-        public RegistrationTransactionModel(int id, string username, string firstname) : base(id)
+        public RegistrationTransactionModel(int recepientId, string username, string firstname) 
+            : base(recepientId)
         {
             UserFirstName = firstname;
-
-            TransactionId = RecepientId = id;
 
             TransactionType = Enums.TransactionType.Registration;
 
             User = new UserModel
             {
-                TelegramId = id,
+                TelegramId = recepientId,
                 Username = username,
                 IsFree = true
             };
