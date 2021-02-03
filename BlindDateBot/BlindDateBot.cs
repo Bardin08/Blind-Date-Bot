@@ -5,6 +5,7 @@ using System.Threading;
 using System.Threading.Tasks;
 
 using BlindDateBot.Commands;
+using BlindDateBot.Data.Contexts;
 using BlindDateBot.Interfaces;
 using BlindDateBot.Models;
 using BlindDateBot.Options;
@@ -23,17 +24,19 @@ namespace BlindDateBot
         private readonly BlindDateBotOptions _options;
 
         private readonly ILogger _logger;
+        private readonly SqlServerContext _db;
 
         private IMessageProcessingStrategy _transactionsProcessor;
         private List<object> _transactions;
 
 
-        public BlindDateBot(IBlindDateBotClient botClient, ILogger<BlindDateBot> logger)
+        public BlindDateBot(IBlindDateBotClient botClient, ILogger<BlindDateBot> logger, SqlServerContext db)
         {
             _botClient = botClient.BotClient;
             _options = botClient.Options;
 
             _logger = logger;
+            _db = db;
 
             _transactionsProcessor = new Strategies.CommandProcessStrategy();
             _transactions = new();
@@ -64,7 +67,7 @@ namespace BlindDateBot
             _transactions.Add(t);
 
             _transactionsProcessor = new Strategies.RegistrationProcessStrategy();
-            await _transactionsProcessor.ProcessTransaction(new Message(), t, _botClient, _logger, null);
+            await _transactionsProcessor.ProcessTransaction(new Message(), t, _botClient, _logger, _db);
         }
 
         private async void MessageReceived(object sender, MessageEventArgs e)
@@ -74,6 +77,7 @@ namespace BlindDateBot
 
         private async Task ProcessMessage(Message message)
         {
+            RemoveCompletedTransactions();
             object userTransaction = _transactions.Find(transaction => (transaction as TransactionBaseModel)?.RecepientId == message.From.Id);
 
             if (message.Text?.StartsWith("/") == true)
@@ -86,7 +90,7 @@ namespace BlindDateBot
                 _transactionsProcessor = SelectStrategy(userTransaction as TransactionBaseModel);
             }
 
-            await _transactionsProcessor.ProcessTransaction(message, userTransaction, _botClient, _logger, null);
+            await _transactionsProcessor.ProcessTransaction(message, userTransaction, _botClient, _logger, _db);
         }
 
         private static IMessageProcessingStrategy SelectStrategy(TransactionBaseModel transaction)

@@ -1,6 +1,6 @@
 ﻿using System.Threading.Tasks;
 
-using BlindDateBot.Data.Interfaces;
+using BlindDateBot.Data.Contexts;
 
 using Microsoft.Extensions.Logging;
 
@@ -11,6 +11,6 @@ namespace BlindDateBot.Interfaces
 {
     public interface IRegistrationTransactionState
     {
-        Task ProcessTransaction(Message message, object transaction, ITelegramBotClient botClient, ILogger logger, IDatabase db);
+        Task ProcessTransaction(Message message, object transaction, ITelegramBotClient botClient, ILogger logger, SqlServerContext db);
     }
 }

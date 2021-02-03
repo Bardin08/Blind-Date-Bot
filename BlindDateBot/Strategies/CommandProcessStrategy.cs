@@ -4,6 +4,7 @@ using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
 
+using BlindDateBot.Data.Contexts;
 using BlindDateBot.Data.Interfaces;
 using BlindDateBot.Interfaces;
 using BlindDateBot.Models;
@@ -17,7 +18,7 @@ namespace BlindDateBot.Strategies
 {
     public class CommandProcessStrategy : IMessageProcessingStrategy
     {
-        public async Task ProcessTransaction(Message message, object transaction, ITelegramBotClient botClient, ILogger logger, IDatabase db)
+        public async Task ProcessTransaction(Message message, object transaction, ITelegramBotClient botClient, ILogger logger, SqlServerContext db)
         {
             if (message.Text == null)
             {
@@ -25,11 +26,20 @@ namespace BlindDateBot.Strategies
                 return;
             }
 
+            var currentTransaction = transaction as CommandTransactionModel;
+
             var commands = LoadCommands();
 
             var requiredCommand = commands?.Find(c => c.Name == message.Text);
 
-            requiredCommand?.Execute(message, transaction as CommandTransactionModel, botClient);
+            if (requiredCommand != null)
+            {
+                await requiredCommand.Execute(message, currentTransaction, botClient);
+            }
+            else
+            {
+                await botClient.SendTextMessageAsync(currentTransaction.RecepientId, Messages.CommandNotFoundMessage);
+            }
         }
 
         private List<IBotCommand> LoadCommands()
