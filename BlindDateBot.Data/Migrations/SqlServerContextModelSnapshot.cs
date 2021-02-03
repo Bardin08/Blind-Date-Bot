@@ -38,6 +38,10 @@ namespace BlindDateBot.Data.Migrations
                         .HasColumnType("bit")
                         .HasColumnName("is_free");
 
+                    b.Property<int>("TelegramId")
+                        .HasColumnType("int")
+                        .HasColumnName("username_telegram_id");
+
                     b.Property<string>("Username")
                         .HasColumnType("nvarchar(max)")
                         .HasColumnName("username");

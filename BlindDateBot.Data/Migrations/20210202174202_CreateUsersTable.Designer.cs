@@ -9,8 +9,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BlindDateBot.Data.Migrations
 {
     [DbContext(typeof(SqlServerContext))]
-    [Migration("20210201213631_SqlServerInitialMigration")]
-    partial class SqlServerInitialMigration
+    [Migration("20210202174202_CreateUsersTable")]
+    partial class CreateUsersTable
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -39,6 +39,10 @@ namespace BlindDateBot.Data.Migrations
                     b.Property<bool>("IsFree")
                         .HasColumnType("bit")
                         .HasColumnName("is_free");
+
+                    b.Property<int>("TelegramId")
+                        .HasColumnType("int")
+                        .HasColumnName("username_telegram_id");
 
                     b.Property<string>("Username")
                         .HasColumnType("nvarchar(max)")

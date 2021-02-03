@@ -2,7 +2,7 @@
 
 namespace BlindDateBot.Data.Migrations
 {
-    public partial class SqlServerInitialMigration : Migration
+    public partial class CreateUsersTable : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -12,6 +12,7 @@ namespace BlindDateBot.Data.Migrations
                 {
                     user_id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
+                    username_telegram_id = table.Column<int>(type: "int", nullable: false),
                     username = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     user_gender = table.Column<int>(type: "int", nullable: false),
                     interlocuter_gender = table.Column<int>(type: "int", nullable: false),
