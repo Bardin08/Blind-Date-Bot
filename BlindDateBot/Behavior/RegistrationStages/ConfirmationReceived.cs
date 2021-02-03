@@ -1,9 +1,14 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 
+using BlindDateBot.Data.Contexts;
 using BlindDateBot.Data.Interfaces;
+using BlindDateBot.Data.Repositories;
+using BlindDateBot.Domain.Models;
 using BlindDateBot.Interfaces;
 using BlindDateBot.Models;
 
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 
 using Telegram.Bot;
@@ -19,7 +24,7 @@ namespace BlindDateBot.Behavior.RegistrationStages
             object transaction,
             ITelegramBotClient botClient,
             ILogger logger,
-            IDatabase db)
+            SqlServerContext db)
         {
             var currentTransaction = transaction as RegistrationTransactionModel;
 
@@ -29,6 +34,8 @@ namespace BlindDateBot.Behavior.RegistrationStages
                                                   logger,
                                                   db);
 
+            AddUserToDb(currentTransaction.User, db);
+
             await botClient.SendTextMessageAsync(currentTransaction.RecepientId,
                                                  Messages.RegistrationComplete,
                                                  replyMarkup: GenerateReplyMarkup());
@@ -37,12 +44,37 @@ namespace BlindDateBot.Behavior.RegistrationStages
             currentTransaction.IsComplete = true;
         }
 
+        private static async void AddUserToDb(UserModel user, SqlServerContext db)
+        {
+            var usersRepository = new UsersRepository(db);
+
+             var existingUser = await usersRepository
+                .GetSingleAsync(u => u.TelegramId == user.TelegramId);
+
+            if (existingUser != null)
+            {
+                user.Id = existingUser.Id;
+
+                existingUser.Gender = user.Gender;
+                existingUser.InterlocutorGender = user.InterlocutorGender;
+                existingUser.IsFree = user.IsFree;
+
+                usersRepository.Update(existingUser);
+            }
+            else
+            {
+                await usersRepository.AddAsync(user);
+            }
+
+            await usersRepository.SaveChangesAsync();
+        }
+
         private static async Task ValidateInputAndUpdateUserModel(
             Message message,
             RegistrationTransactionModel transaction,
             ITelegramBotClient botClient,
             ILogger logger,
-            IDatabase db)
+            SqlServerContext db)
         {
             if (message?.Text == null || !int.TryParse(message.Text, out int reply))
             {

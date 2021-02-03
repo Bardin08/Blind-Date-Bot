@@ -22,7 +22,7 @@ namespace BlindDateBot.Models
 
             User = new UserModel
             {
-                Id = id,
+                TelegramId = id,
                 Username = username,
                 IsFree = true
             };

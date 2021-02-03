@@ -1,7 +1,7 @@
 ﻿using System.Text;
 using System.Threading.Tasks;
 
-using BlindDateBot.Data.Interfaces;
+using BlindDateBot.Data.Contexts;
 using BlindDateBot.Domain.Models.Enums;
 using BlindDateBot.Interfaces;
 using BlindDateBot.Models;
@@ -21,7 +21,7 @@ namespace BlindDateBot.Behavior.RegistrationStages
             object transaction,
             ITelegramBotClient botClient,
             ILogger logger,
-            IDatabase db)
+            SqlServerContext db)
         {
             var currentTransaction = transaction as RegistrationTransactionModel;
 
@@ -31,13 +31,15 @@ namespace BlindDateBot.Behavior.RegistrationStages
                                             logger,
                                             db);
 
-            // TODO: Generate normal message
             var sb = new StringBuilder();
             sb.Append(string.Format(Messages.ConfirmData,
                                     currentTransaction.User.Gender.ToString(),
                                     currentTransaction.User.InterlocutorGender.ToString()));
 
-            await botClient.SendTextMessageAsync(currentTransaction.RecepientId, sb.ToString(), replyMarkup: CreateReplyKeyboard());
+            await botClient.SendTextMessageAsync(currentTransaction.RecepientId,
+                                                 sb.ToString(),
+                                                 replyMarkup: CreateReplyKeyboard());
+
             currentTransaction.TransactionState = new ConfirmationReceived();
         }
 
@@ -45,8 +47,8 @@ namespace BlindDateBot.Behavior.RegistrationStages
             Message message,
             RegistrationTransactionModel transaction,
             ITelegramBotClient botClient,
-            ILogger logger,
-            IDatabase db)
+            ILogger logger, 
+            SqlServerContext db)
         {
             if (message?.Text == null || !int.TryParse(message.Text, out int genderId))
             {
@@ -65,7 +67,6 @@ namespace BlindDateBot.Behavior.RegistrationStages
             {
                 transaction.User.InterlocutorGender = Gender.Female;
             }
-
         }
     
         private static InlineKeyboardMarkup CreateReplyKeyboard()

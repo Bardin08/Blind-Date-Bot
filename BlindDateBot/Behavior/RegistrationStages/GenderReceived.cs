@@ -1,6 +1,6 @@
 ﻿using System.Threading.Tasks;
 
-using BlindDateBot.Data.Interfaces;
+using BlindDateBot.Data.Contexts;
 using BlindDateBot.Domain.Models.Enums;
 using BlindDateBot.Interfaces;
 using BlindDateBot.Models;
@@ -20,7 +20,7 @@ namespace BlindDateBot.Behavior.RegistrationStages
             object transaction,
             ITelegramBotClient botClient,
             ILogger logger,
-            IDatabase db)
+            SqlServerContext db)
         {
             var currentTransaction = transaction as RegistrationTransactionModel;
 
@@ -42,7 +42,7 @@ namespace BlindDateBot.Behavior.RegistrationStages
             RegistrationTransactionModel transaction,
             ITelegramBotClient botClient,
             ILogger logger,
-            IDatabase db)
+            SqlServerContext db)
         {
             if (message?.Text == null || !int.TryParse(message.Text, out int genderId))
             {
