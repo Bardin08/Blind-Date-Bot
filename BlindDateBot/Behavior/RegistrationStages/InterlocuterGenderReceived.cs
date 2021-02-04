@@ -36,10 +36,12 @@ namespace BlindDateBot.Behavior.RegistrationStages
                                     currentTransaction.User.Gender.ToString(),
                                     currentTransaction.User.InterlocutorGender.ToString()));
 
-            await botClient.SendTextMessageAsync(currentTransaction.RecepientId,
+            var sentMessage = await botClient.SendTextMessageAsync(currentTransaction.RecepientId,
                                                  sb.ToString(),
                                                  replyMarkup: CreateReplyKeyboard());
 
+            currentTransaction.MessageIds.Add(sentMessage.MessageId);
+            
             currentTransaction.TransactionState = new ConfirmationReceived();
         }
 

@@ -1,19 +1,18 @@
-﻿using System;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
+using System.Linq;
 
 using BlindDateBot.Data.Contexts;
-using BlindDateBot.Data.Interfaces;
 using BlindDateBot.Data.Repositories;
 using BlindDateBot.Domain.Models;
 using BlindDateBot.Interfaces;
 using BlindDateBot.Models;
 
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 
 using Telegram.Bot;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.ReplyMarkups;
+using Microsoft.EntityFrameworkCore;
 
 namespace BlindDateBot.Behavior.RegistrationStages
 {
@@ -36,9 +35,11 @@ namespace BlindDateBot.Behavior.RegistrationStages
 
             AddUserToDb(currentTransaction.User, db);
 
-            await botClient.SendTextMessageAsync(currentTransaction.RecepientId,
+            var sentMessage = await botClient.SendTextMessageAsync(currentTransaction.RecepientId,
                                                  Messages.RegistrationComplete,
                                                  replyMarkup: GenerateReplyMarkup());
+
+            currentTransaction.MessageIds.Add(sentMessage.MessageId);
 
             currentTransaction.TransactionState = new InterlocuterGenderReceived();
             currentTransaction.IsComplete = true;
@@ -46,10 +47,8 @@ namespace BlindDateBot.Behavior.RegistrationStages
 
         private static async void AddUserToDb(UserModel user, SqlServerContext db)
         {
-            var usersRepository = new UsersRepository(db);
-
-             var existingUser = await usersRepository
-                .GetSingleAsync(u => u.TelegramId == user.TelegramId);
+             var existingUser = await db.Users
+                .FirstOrDefaultAsync(u => u.TelegramId == user.TelegramId);
 
             if (existingUser != null)
             {
@@ -59,14 +58,14 @@ namespace BlindDateBot.Behavior.RegistrationStages
                 existingUser.InterlocutorGender = user.InterlocutorGender;
                 existingUser.IsFree = user.IsFree;
 
-                usersRepository.Update(existingUser);
+                db.Update(existingUser);
             }
             else
             {
-                await usersRepository.AddAsync(user);
+                await db.AddAsync(user);
             }
 
-            await usersRepository.SaveChangesAsync();
+            await db.SaveChangesAsync();
         }
 
         private static async Task ValidateInputAndUpdateUserModel(

@@ -30,9 +30,11 @@ namespace BlindDateBot.Behavior.RegistrationStages
                                         logger,
                                         db);
 
-            await botClient.SendTextMessageAsync(currentTransaction.RecepientId,
+            var sentMessage = await botClient.SendTextMessageAsync(currentTransaction.RecepientId,
                                                  Messages.SelectInterlocuterGender,
                                                  replyMarkup: CreateReplyKeyboard());
+
+            currentTransaction.MessageIds.Add(sentMessage.MessageId);
 
             currentTransaction.TransactionState = new InterlocuterGenderReceived();
         }
