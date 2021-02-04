@@ -31,10 +31,7 @@ namespace BotExecuter
                     s.AddSingleton<IBlindDateBotClient>(new BlindDataBotClient(builder.Build()));
                     s.AddSingleton<BlindDateBot.BlindDateBot>();
 
-                    s.AddDbContext<SqlServerContext, SqlServerContext>(options =>
-                    {
-                        options.UseSqlServer(builder.Build().GetSection("DB:MsSqlDb")["ConnectionString"]);
-                    });
+                    s.AddSingleton<IConfiguration>(builder.Build());
                 })
                 .UseSerilog()
                 .Build();
