@@ -2,7 +2,7 @@
 {
     public enum TransactionType
     {
-        DataMessaging,
+        DateMessaging,
         Command,
         Registration
     }
