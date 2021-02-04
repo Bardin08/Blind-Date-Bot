@@ -70,7 +70,8 @@ namespace BlindDateBot {
         }
         
         /// <summary>
-        ///   Ищет локализованную строку, похожую на Gender: {0}, \r\nInterlocuter gender: {1}.
+        ///   Ищет локализованную строку, похожую на Gender: {0},
+        ///Interlocuter gender: {1}.
         /// </summary>
         internal static string ConfirmData {
             get {
@@ -79,7 +80,7 @@ namespace BlindDateBot {
         }
         
         /// <summary>
-        ///   Ищет локализованную строку, похожую на Date has began.
+        ///   Ищет локализованную строку, похожую на Свидание найдено!🥰🤩.
         /// </summary>
         internal static string DateHasBegan {
             get {
@@ -88,7 +89,7 @@ namespace BlindDateBot {
         }
         
         /// <summary>
-        ///   Ищет локализованную строку, похожую на Date search began.
+        ///   Ищет локализованную строку, похожую на Начинаю поиск свидания…⏱🤔.
         /// </summary>
         internal static string DateSearchText {
             get {
@@ -115,15 +116,6 @@ namespace BlindDateBot {
         }
         
         /// <summary>
-        ///   Ищет локализованную строку, похожую на Interlocutor not found. You&apos;ll be notified when I find somebody for you.
-        /// </summary>
-        internal static string InterlocutorNotFound {
-            get {
-                return ResourceManager.GetString("InterlocutorNotFound", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Ищет локализованную строку, похожую на Sorry, smth went wrong. Try to use /start command again..
         /// </summary>
         internal static string InternalErrorUserNotFound {
@@ -142,7 +134,7 @@ namespace BlindDateBot {
         }
         
         /// <summary>
-        ///   Ищет локализованную строку, похожую на Нет.
+        ///   Ищет локализованную строку, похожую на Нет❌.
         /// </summary>
         internal static string No {
             get {
@@ -160,7 +152,8 @@ namespace BlindDateBot {
         }
         
         /// <summary>
-        ///   Ищет локализованную строку, похожую на Registration begin.
+        ///   Ищет локализованную строку, похожую на Привет, {0}👋
+        ///Укажи свой пол:.
         /// </summary>
         internal static string RegistrationInitMessage {
             get {
@@ -169,7 +162,7 @@ namespace BlindDateBot {
         }
         
         /// <summary>
-        ///   Ищет локализованную строку, похожую на Select interlocuter gender.
+        ///   Ищет локализованную строку, похожую на Кто тебе интересен?.
         /// </summary>
         internal static string SelectInterlocuterGender {
             get {
@@ -187,7 +180,7 @@ namespace BlindDateBot {
         }
         
         /// <summary>
-        ///   Ищет локализованную строку, похожую на Да.
+        ///   Ищет локализованную строку, похожую на Да✅.
         /// </summary>
         internal static string Yes {
             get {
