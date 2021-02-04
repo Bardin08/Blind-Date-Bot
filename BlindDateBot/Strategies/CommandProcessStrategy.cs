@@ -16,17 +16,17 @@ using Telegram.Bot.Types;
 
 namespace BlindDateBot.Strategies
 {
-    public class CommandProcessStrategy : IMessageProcessingStrategy
+    public class CommandProcessStrategy : ITransactionProcessingStrategy
     {
         public async Task ProcessTransaction(Message message, object transaction, ITelegramBotClient botClient, ILogger logger, SqlServerContext db)
         {
-            if (message.Text == null)
+            var currentTransaction = transaction as CommandTransactionModel;
+
+            if (message?.Text == null)
             {
-                await botClient.SendTextMessageAsync(message.From.Id, Messages.CommandNotFoundMessage);
+                await botClient.SendTextMessageAsync(currentTransaction.RecepientId, Messages.CommandNotFoundMessage);
                 return;
             }
-
-            var currentTransaction = transaction as CommandTransactionModel;
 
             var commands = LoadCommands();
 
@@ -34,7 +34,7 @@ namespace BlindDateBot.Strategies
 
             if (requiredCommand != null)
             {
-                await requiredCommand.Execute(message, currentTransaction, botClient);
+                await requiredCommand.Execute(message, currentTransaction, botClient, logger, db);
             }
             else
             {

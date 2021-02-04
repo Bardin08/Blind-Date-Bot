@@ -1,7 +1,7 @@
 ﻿using System.Threading.Tasks;
 
 using BlindDateBot.Data.Contexts;
-using BlindDateBot.Models;
+using BlindDateBot.Interfaces;
 
 using Microsoft.Extensions.Logging;
 
@@ -10,11 +10,11 @@ using Telegram.Bot.Types;
 
 namespace BlindDateBot.Strategies
 {
-    public class DateProcessStrategy : Interfaces.ITransactionProcessingStrategy
+    public class DefaultProcessStrategy : ITransactionProcessingStrategy
     {
         public async Task ProcessTransaction(Message message, object transaction, ITelegramBotClient botClient, ILogger logger, SqlServerContext db)
         {
-            await (transaction as DateTransactionModel)?.State.ProcessTransaction(message, transaction, botClient, logger, db);   
+            await botClient.SendTextMessageAsync(message.From.Id, "Default handler works!");
         }
     }
 }
