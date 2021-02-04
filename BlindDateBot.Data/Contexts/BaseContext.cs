@@ -6,9 +6,6 @@ namespace BlindDateBot.Data.Contexts
 {
     public class BaseContext : DbContext
     {
-        public BaseContext(DbContextOptions options)
-            : base(options) { }
-
         public DbSet<UserModel> Users { get; set; }
         public DbSet<DateModel> Dates { get; set; }
         public DbSet<MessageModel> Messages { get; set; }
