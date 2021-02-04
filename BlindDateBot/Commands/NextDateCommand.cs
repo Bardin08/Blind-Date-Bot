@@ -1,21 +1,67 @@
 ﻿using System.Threading.Tasks;
 
+using BlindDateBot.Data.Contexts;
+using BlindDateBot.Domain.Models;
+using BlindDateBot.Interfaces;
 using BlindDateBot.Models;
+
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 
 using Telegram.Bot;
 using Telegram.Bot.Types;
 
 namespace BlindDateBot.Commands
 {
-    class NextDateCommand : Interfaces.IBotCommand
+    class NextDateCommand : IBotCommand
     {
-        public static Delegates.DateInitiatedHandler DateInitiated;
+        public static event Delegates.DateFoundHandler DateFound;
 
         public string Name => "/next_date";
 
-        public async Task Execute(Message message, object transaction, ITelegramBotClient botClient)
+        public async Task Execute(Message message, object transaction, ITelegramBotClient botClient, ILogger logger, SqlServerContext db)
         {
-            DateInitiated?.Invoke(new DateTransactionModel(message.From.Id));
+            var currentTransaction = transaction as TransactionBaseModel;
+
+            await botClient.SendTextMessageAsync(currentTransaction.RecepientId, Messages.DateSearchText);
+
+            var user = await db.Users.FirstOrDefaultAsync(u => u.TelegramId == currentTransaction.RecepientId);
+            if (user == null)
+            {
+                await botClient.SendTextMessageAsync(currentTransaction.RecepientId, Messages.InternalErrorUserNotFound);
+                return;
+            }
+
+            var interlocutor = await db.Users.FirstOrDefaultAsync(u => u.IsFree == true
+                                                                       && user.InterlocutorGender == u.Gender
+                                                                       && user.Gender == u.InterlocutorGender
+                                                                       && u.Id != user.Id);
+            if (interlocutor == null)
+            {
+                return;
+            }
+
+            var dateModel = new DateModel(currentTransaction.TransactionId)
+            {
+                FirstUser = user,
+                SecondUser = interlocutor,
+                IsActive = true
+            };
+
+            user.IsFree = false;
+            db.Update(user);
+
+            interlocutor.IsFree = false;
+            db.Update(interlocutor);
+
+
+            await db.Dates.AddAsync(dateModel);
+            await db.SaveChangesAsync();
+
+            await botClient.SendTextMessageAsync(user.TelegramId, Messages.DateHasBegan);
+            await botClient.SendTextMessageAsync(interlocutor.TelegramId, Messages.DateHasBegan);
+
+            DateFound?.Invoke(new DateTransactionModel(-1, dateModel));
         }
     }
 }
