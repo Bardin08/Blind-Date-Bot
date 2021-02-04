@@ -8,13 +8,18 @@ namespace BlindDateBot.Models
 {
     public class DateTransactionModel : TransactionBaseModel
     {
-        public DateTransactionModel(int recepientId) : base(recepientId)
+        public DateTransactionModel(int recepientId, DateModel dateModel)
+            : base(recepientId)
         {
-            State = new DateSearchInitiated();
-            TransactionType = Enums.TransactionType.DataMessaging;
+            State = new DateFound();
+            TransactionType = Enums.TransactionType.DateMessaging;
+
+            Date = dateModel;
+            Date.Id = TransactionId;
         }
 
+        public DateModel Date { get; set; }
+        
         public IDateTransactionState State { get; set; }
-        public List<MessageModel> Messages { get; set; }
     }
 }
