@@ -23,12 +23,12 @@ namespace BlindDateBot.Commands
         {
             var currentTransaction = transaction as TransactionBaseModel;
 
-            await botClient.SendTextMessageAsync(currentTransaction.RecepientId, Messages.DateSearchText);
+            await botClient.SendTextMessageAsync(currentTransaction.RecipientId, Messages.DateSearchText);
 
-            var user = await db.Users.FirstOrDefaultAsync(u => u.TelegramId == currentTransaction.RecepientId);
+            var user = await db.Users.FirstOrDefaultAsync(u => u.TelegramId == currentTransaction.RecipientId);
             if (user == null)
             {
-                await botClient.SendTextMessageAsync(currentTransaction.RecepientId, Messages.InternalErrorUserNotFound);
+                await botClient.SendTextMessageAsync(currentTransaction.RecipientId, Messages.InternalErrorUserNotFound);
                 return;
             }
 
@@ -61,7 +61,7 @@ namespace BlindDateBot.Commands
             await botClient.SendTextMessageAsync(user.TelegramId, Messages.DateHasBegan);
             await botClient.SendTextMessageAsync(interlocutor.TelegramId, Messages.DateHasBegan);
 
-            DateFound?.Invoke(new DateTransactionModel(-1, dateModel));
+            DateFound?.Invoke(new DateTransactionModel(dateModel));
         }
     }
 }
