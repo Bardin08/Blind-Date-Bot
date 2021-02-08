@@ -27,22 +27,25 @@ namespace BlindDateBot.Behavior.RegistrationStages
         {
             var currentTransaction = transaction as RegistrationTransactionModel;
 
-            await ValidateInputAndUpdateUserModel(message,
+            var isValid = await ValidateInputAndUpdateUserModel(message,
                                                   currentTransaction,
                                                   botClient,
                                                   logger,
                                                   db);
 
-            AddUserToDb(currentTransaction.User, db);
+            if (isValid)
+            {
+                AddUserToDb(currentTransaction.User, db);
 
-            var sentMessage = await botClient.SendTextMessageAsync(currentTransaction.RecepientId,
-                                                 Messages.RegistrationComplete,
-                                                 replyMarkup: GenerateReplyMarkup());
+                var sentMessage = await botClient.SendTextMessageAsync(currentTransaction.RecipientId,
+                                                     Messages.RegistrationComplete,
+                                                     replyMarkup: GenerateReplyMarkup());
 
-            currentTransaction.MessageIds.Add(sentMessage.MessageId);
+                currentTransaction.MessageIds.Add(sentMessage.MessageId);
 
-            currentTransaction.TransactionState = new InterlocuterGenderReceived();
-            currentTransaction.IsComplete = true;
+                currentTransaction.TransactionState = new InterlocuterGenderReceived();
+                currentTransaction.IsComplete = true;
+            }
         }
 
         private static async void AddUserToDb(UserModel user, SqlServerContext db)
@@ -68,7 +71,7 @@ namespace BlindDateBot.Behavior.RegistrationStages
             await db.SaveChangesAsync();
         }
 
-        private static async Task ValidateInputAndUpdateUserModel(
+        private static async Task<bool> ValidateInputAndUpdateUserModel(
             Message message,
             RegistrationTransactionModel transaction,
             ITelegramBotClient botClient,
@@ -77,11 +80,11 @@ namespace BlindDateBot.Behavior.RegistrationStages
         {
             if (message?.Text == null || !int.TryParse(message.Text, out int reply))
             {
-                await botClient.SendTextMessageAsync(transaction.RecepientId, Messages.SomethingWentWrong);
+                await botClient.SendTextMessageAsync(transaction.RecipientId, Messages.SomethingWentWrong);
 
                 transaction.TransactionState = new RegistrationInitiated();
                 await transaction.TransactionState.ProcessTransaction(message, transaction, botClient, logger, db);
-                return;
+                return false;
             }
 
             bool isConfirmed = true;
@@ -94,8 +97,10 @@ namespace BlindDateBot.Behavior.RegistrationStages
             {
                 transaction.TransactionState = new RegistrationInitiated();
                 await transaction.TransactionState.ProcessTransaction(message, transaction, botClient, logger, db);
-                return;
+                return false;
             }
+
+            return true;
         }
 
         private static InlineKeyboardMarkup GenerateReplyMarkup()
