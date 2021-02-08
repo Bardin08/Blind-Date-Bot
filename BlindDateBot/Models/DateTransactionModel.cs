@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-
-using BlindDateBot.Behavior.DateStages;
+﻿using BlindDateBot.Behavior.DateStages;
 using BlindDateBot.Domain.Models;
 using BlindDateBot.Interfaces;
 
@@ -8,8 +6,10 @@ namespace BlindDateBot.Models
 {
     public class DateTransactionModel : TransactionBaseModel
     {
-        public DateTransactionModel(int recepientId, DateModel dateModel)
-            : base(recepientId)
+        public const int RecepientIdForDateTransaction = -1;
+
+        public DateTransactionModel(DateModel dateModel)
+            : base(RecepientIdForDateTransaction)
         {
             State = new DateFound();
             TransactionType = Enums.TransactionType.DateMessaging;

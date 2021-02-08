@@ -30,7 +30,7 @@ namespace BlindDateBot.Behavior.RegistrationStages
                                         logger,
                                         db);
 
-            var sentMessage = await botClient.SendTextMessageAsync(currentTransaction.RecepientId,
+            var sentMessage = await botClient.SendTextMessageAsync(currentTransaction.RecipientId,
                                                  Messages.SelectInterlocuterGender,
                                                  replyMarkup: CreateReplyKeyboard());
 
@@ -48,7 +48,7 @@ namespace BlindDateBot.Behavior.RegistrationStages
         {
             if (message?.Text == null || !int.TryParse(message.Text, out int genderId))
             {
-                await botClient.SendTextMessageAsync(transaction.RecepientId, Messages.SomethingWentWrong);
+                await botClient.SendTextMessageAsync(transaction.RecipientId, Messages.SomethingWentWrong);
 
                 transaction.TransactionState = new RegistrationInitiated();
                 await transaction.TransactionState.ProcessTransaction(message, transaction, botClient, logger, db);

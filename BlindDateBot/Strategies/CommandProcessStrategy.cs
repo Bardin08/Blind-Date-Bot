@@ -24,7 +24,7 @@ namespace BlindDateBot.Strategies
 
             if (message?.Text == null)
             {
-                await botClient.SendTextMessageAsync(currentTransaction.RecepientId, Messages.CommandNotFoundMessage);
+                await botClient.SendTextMessageAsync(currentTransaction.RecipientId, Messages.CommandNotFoundMessage);
                 return;
             }
 
@@ -38,7 +38,7 @@ namespace BlindDateBot.Strategies
             }
             else
             {
-                await botClient.SendTextMessageAsync(currentTransaction.RecepientId, Messages.CommandNotFoundMessage);
+                await botClient.SendTextMessageAsync(currentTransaction.RecipientId, Messages.CommandNotFoundMessage);
             }
         }
 

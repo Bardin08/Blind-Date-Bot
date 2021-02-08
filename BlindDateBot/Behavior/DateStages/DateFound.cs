@@ -32,8 +32,6 @@ namespace BlindDateBot.Behavior.DateStages
             };
 
             await botClient.SendTextMessageAsync(messageModel.To.TelegramId, messageModel.Text);
-
-            currentTransaction.Date.Messages.Add(messageModel);
         }
     }
 }

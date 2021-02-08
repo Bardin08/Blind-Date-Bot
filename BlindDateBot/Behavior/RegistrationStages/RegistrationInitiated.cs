@@ -22,7 +22,7 @@ namespace BlindDateBot.Behavior.RegistrationStages
         {
             var currentTransaction = transaction as RegistrationTransactionModel;
 
-            var sentMessage = await botClient.SendTextMessageAsync(currentTransaction.RecepientId,
+            var sentMessage = await botClient.SendTextMessageAsync(currentTransaction.RecipientId,
                                                  string.Format(Messages.RegistrationInitMessage, currentTransaction.UserFirstName),
                                                  replyMarkup: CreateReplyKeyboard());
 

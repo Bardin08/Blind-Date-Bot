@@ -10,7 +10,7 @@ namespace BlindDateBot.Models
         public TransactionBaseModel(int recepientId)
         {
             TransactionId = Guid.NewGuid().ToString();
-            RecepientId = recepientId;
+            RecipientId = recepientId;
             IsComplete = false;
     
             MessageIds = new();
@@ -18,7 +18,7 @@ namespace BlindDateBot.Models
 
         public bool IsComplete { get; set; }
         public string TransactionId { get; set; }
-        public int RecepientId { get; set; }
+        public int RecipientId { get; set; }
         public TransactionType TransactionType { get; set; }
         public List<int> MessageIds { get; set; }
     }
