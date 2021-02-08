@@ -24,8 +24,12 @@ namespace BlindDateBot.Commands
         {
             var cuurentTransaction = transaction as CommandTransactionModel;
 
-            var date = db.Dates.Include(u => u.FirstUser).Include(u => u.SecondUser).FirstOrDefault(d => d.FirstUser.TelegramId == cuurentTransaction.RecipientId
-                                                 || d.SecondUser.TelegramId == cuurentTransaction.RecipientId);
+            var date = db.Dates
+                .Include(u => u.FirstUser)
+                .Include(u => u.SecondUser)
+                .FirstOrDefault(d => (d.FirstUser.TelegramId == cuurentTransaction.RecipientId
+                                  || d.SecondUser.TelegramId == cuurentTransaction.RecipientId)
+                                  && d.IsActive == true);
 
             if (date is null)
             { 
@@ -46,7 +50,7 @@ namespace BlindDateBot.Commands
             await botClient.SendTextMessageAsync(date.FirstUser.TelegramId, "Date finished use command /next_date to find a new one");
             await botClient.SendTextMessageAsync(date.SecondUser.TelegramId, "Date finished use command /next_date to find a new one");
 
-            DateEnd?.Invoke(cuurentTransaction.TransactionId);
+            DateEnd?.Invoke(date.Id);
         }
     }
 }

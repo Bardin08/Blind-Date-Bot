@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 
 using BlindDateBot.Data.Contexts;
 using BlindDateBot.Domain.Models;
@@ -41,7 +42,7 @@ namespace BlindDateBot.Commands
                 return;
             }
 
-            var dateModel = new DateModel(currentTransaction.TransactionId)
+            var dateModel = new DateModel(Guid.NewGuid().ToString())
             {
                 FirstUser = user,
                 SecondUser = interlocutor,

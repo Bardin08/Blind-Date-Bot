@@ -14,8 +14,8 @@ namespace BlindDateBot.Models
             State = new DateFound();
             TransactionType = Enums.TransactionType.DateMessaging;
 
+            TransactionId = dateModel.Id;
             Date = dateModel;
-            Date.Id = TransactionId;
         }
 
         public DateModel Date { get; set; }
