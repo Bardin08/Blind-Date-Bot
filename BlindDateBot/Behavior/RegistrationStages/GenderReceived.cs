@@ -72,12 +72,12 @@ namespace BlindDateBot.Behavior.RegistrationStages
                 new InlineKeyboardButton()
                 {
                     CallbackData = "0",
-                    Text = Messages.Male
+                    Text = Messages.InterlocutorMale
                 },
                 new InlineKeyboardButton()
                 {
                     CallbackData = "1",
-                    Text = Messages.Female
+                    Text = Messages.InterlocutorFemale
                 }
             });
         }

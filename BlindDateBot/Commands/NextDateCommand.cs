@@ -24,6 +24,12 @@ namespace BlindDateBot.Commands
         {
             var currentTransaction = transaction as TransactionBaseModel;
 
+            if (TransactionsContainer.DateForUserExists(currentTransaction.RecipientId))
+            {
+                await botClient.SendTextMessageAsync(currentTransaction.RecipientId, Messages.YouHaveAnActiveDate);
+                return;
+            }
+
             await botClient.SendTextMessageAsync(currentTransaction.RecipientId, Messages.DateSearchText);
 
             var user = await db.Users.FirstOrDefaultAsync(u => u.TelegramId == currentTransaction.RecipientId);
@@ -33,7 +39,7 @@ namespace BlindDateBot.Commands
                 return;
             }
 
-            var interlocutor = await db.Users.FirstOrDefaultAsync(u => u.IsFree == true
+                        var interlocutor = await db.Users.FirstOrDefaultAsync(u => u.IsFree == true
                                                                        && user.InterlocutorGender == u.Gender
                                                                        && user.Gender == u.InterlocutorGender
                                                                        && u.Id != user.Id);

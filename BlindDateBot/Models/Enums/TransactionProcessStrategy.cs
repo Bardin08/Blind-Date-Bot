@@ -5,6 +5,7 @@
         Default = 0,
         Command = 1,
         Registration = 2,
-        Date = 3
+        Date = 3,
+        Feedback = 4
     }
 }

@@ -70,12 +70,23 @@ namespace BlindDateBot {
         }
         
         /// <summary>
-        ///   Ищет локализованную строку, похожую на Gender: {0},
-        ///Interlocuter gender: {1}.
+        ///   Ищет локализованную строку, похожую на Твой пол: {0},
+        ///Пол собеседника: {1}.
         /// </summary>
         internal static string ConfirmData {
             get {
                 return ResourceManager.GetString("ConfirmData", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на Свидание завершено. Спасибо. 
+        ///
+        ///Хочешь пообщаться ещё с кем-нибудь? Испльзуй команду /next_date..
+        /// </summary>
+        internal static string DateEnd {
+            get {
+                return ResourceManager.GetString("DateEnd", resourceCulture);
             }
         }
         
@@ -98,11 +109,12 @@ namespace BlindDateBot {
         }
         
         /// <summary>
-        ///   Ищет локализованную строку, похожую на Женский.
+        ///   Ищет локализованную строку, похожую на Напиши, что ты думаешь об опыте использования бота. Спасибо!
+        ///Твое следующее сообщение будет переслано студсовету..
         /// </summary>
-        internal static string Female {
+        internal static string FeedbackInitiated {
             get {
-                return ResourceManager.GetString("Female", resourceCulture);
+                return ResourceManager.GetString("FeedbackInitiated", resourceCulture);
             }
         }
         
@@ -116,20 +128,47 @@ namespace BlindDateBot {
         }
         
         /// <summary>
+        ///   Ищет локализованную строку, похожую на Я девушка 👩.
+        /// </summary>
+        internal static string IFemale {
+            get {
+                return ResourceManager.GetString("IFemale", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на Я парень🧑.
+        /// </summary>
+        internal static string IMale {
+            get {
+                return ResourceManager.GetString("IMale", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на Девушки 🙍‍♀️.
+        /// </summary>
+        internal static string InterlocutorFemale {
+            get {
+                return ResourceManager.GetString("InterlocutorFemale", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на Парни🙍‍♂️.
+        /// </summary>
+        internal static string InterlocutorMale {
+            get {
+                return ResourceManager.GetString("InterlocutorMale", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Ищет локализованную строку, похожую на Sorry, smth went wrong. Try to use /start command again..
         /// </summary>
         internal static string InternalErrorUserNotFound {
             get {
                 return ResourceManager.GetString("InternalErrorUserNotFound", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Ищет локализованную строку, похожую на Мужской.
-        /// </summary>
-        internal static string Male {
-            get {
-                return ResourceManager.GetString("Male", resourceCulture);
             }
         }
         
@@ -143,7 +182,7 @@ namespace BlindDateBot {
         }
         
         /// <summary>
-        ///   Ищет локализованную строку, похожую на U`re successfully registrate.
+        ///   Ищет локализованную строку, похожую на Регистрация прошла успешно. Скоро ты сможешь познакомиться с человеком..
         /// </summary>
         internal static string RegistrationComplete {
             get {
@@ -152,8 +191,7 @@ namespace BlindDateBot {
         }
         
         /// <summary>
-        ///   Ищет локализованную строку, похожую на Привет, {0}👋
-        ///Укажи свой пол:.
+        ///   Ищет локализованную строку, похожую на Привет! Этот бот создан для анонимного общения в День Святого Валентина. Укажи свой пол и пол человека, с которым хочешь поговорить..
         /// </summary>
         internal static string RegistrationInitMessage {
             get {
@@ -185,6 +223,24 @@ namespace BlindDateBot {
         internal static string Yes {
             get {
                 return ResourceManager.GetString("Yes", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на У тебя уже идет свидание. Если хочешь найти новое сначала заверши это командой /end_date..
+        /// </summary>
+        internal static string YouHaveAnActiveDate {
+            get {
+                return ResourceManager.GetString("YouHaveAnActiveDate", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на У тебя сейчас нет активного свидания, используй команду /next_date, чтобы найти его..
+        /// </summary>
+        internal static string YouHaventAnActiveDate {
+            get {
+                return ResourceManager.GetString("YouHaventAnActiveDate", resourceCulture);
             }
         }
     }

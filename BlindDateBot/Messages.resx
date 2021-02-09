@@ -121,8 +121,13 @@
     <value>Ошибка распознавание команды</value>
   </data>
   <data name="ConfirmData" xml:space="preserve">
-    <value>Gender: {0},
-Interlocuter gender: {1}</value>
+    <value>Твой пол: {0},
+Пол собеседника: {1}</value>
+  </data>
+  <data name="DateEnd" xml:space="preserve">
+    <value>Свидание завершено. Спасибо. 
+
+Хочешь пообщаться ещё с кем-нибудь? Испльзуй команду /next_date.</value>
   </data>
   <data name="DateHasBegan" xml:space="preserve">
     <value>Свидание найдено!🥰🤩</value>
@@ -130,27 +135,36 @@ Interlocuter gender: {1}</value>
   <data name="DateSearchText" xml:space="preserve">
     <value>Начинаю поиск свидания…⏱🤔</value>
   </data>
-  <data name="Female" xml:space="preserve">
-    <value>Женский</value>
+  <data name="FeedbackInitiated" xml:space="preserve">
+    <value>Напиши, что ты думаешь об опыте использования бота. Спасибо!
+Твое следующее сообщение будет переслано студсовету.</value>
   </data>
   <data name="FindDate" xml:space="preserve">
     <value>Найти свидание</value>
   </data>
+  <data name="IFemale" xml:space="preserve">
+    <value>Я девушка 👩</value>
+  </data>
+  <data name="IMale" xml:space="preserve">
+    <value>Я парень🧑</value>
+  </data>
+  <data name="InterlocutorFemale" xml:space="preserve">
+    <value>Девушки 🙍‍♀️</value>
+  </data>
+  <data name="InterlocutorMale" xml:space="preserve">
+    <value>Парни🙍‍♂️</value>
+  </data>
   <data name="InternalErrorUserNotFound" xml:space="preserve">
     <value>Sorry, smth went wrong. Try to use /start command again.</value>
-  </data>
-  <data name="Male" xml:space="preserve">
-    <value>Мужской</value>
   </data>
   <data name="No" xml:space="preserve">
     <value>Нет❌</value>
   </data>
   <data name="RegistrationComplete" xml:space="preserve">
-    <value>U`re successfully registrate</value>
+    <value>Регистрация прошла успешно. Скоро ты сможешь познакомиться с человеком.</value>
   </data>
   <data name="RegistrationInitMessage" xml:space="preserve">
-    <value>Привет, {0}👋
-Укажи свой пол:</value>
+    <value>Привет! Этот бот создан для анонимного общения в День Святого Валентина. Укажи свой пол и пол человека, с которым хочешь поговорить.</value>
     <comment>+ SelectGenderMessage</comment>
   </data>
   <data name="SelectInterlocuterGender" xml:space="preserve">
@@ -161,5 +175,11 @@ Interlocuter gender: {1}</value>
   </data>
   <data name="Yes" xml:space="preserve">
     <value>Да✅</value>
+  </data>
+  <data name="YouHaveAnActiveDate" xml:space="preserve">
+    <value>У тебя уже идет свидание. Если хочешь найти новое сначала заверши это командой /end_date.</value>
+  </data>
+  <data name="YouHaventAnActiveDate" xml:space="preserve">
+    <value>У тебя сейчас нет активного свидания, используй команду /next_date, чтобы найти его.</value>
   </data>
 </root>

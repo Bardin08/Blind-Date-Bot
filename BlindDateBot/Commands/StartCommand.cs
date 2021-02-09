@@ -19,7 +19,7 @@ namespace BlindDateBot.Commands
         public async Task Execute(Message message, object transaction, ITelegramBotClient botClient, ILogger logger, SqlServerContext db)
         {
             var registrationTransaction = new Models.RegistrationTransactionModel(message.From.Id, message.From.Username, message.From.FirstName);
-            RegistrationInitiated.Invoke(registrationTransaction);
+            RegistrationInitiated?.Invoke(registrationTransaction);
             return;
         }
     }

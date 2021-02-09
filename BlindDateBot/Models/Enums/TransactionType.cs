@@ -4,6 +4,7 @@
     {
         DateMessaging,
         Command,
-        Registration
+        Registration,
+        Feedback
     }
 }

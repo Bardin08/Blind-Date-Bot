@@ -38,12 +38,12 @@ namespace BlindDateBot.Behavior.RegistrationStages
                 new InlineKeyboardButton()
                 {
                     CallbackData = "0",
-                    Text = Messages.Male
+                    Text = Messages.IMale
                 },
                 new InlineKeyboardButton()
                 {
                     CallbackData = "1",
-                    Text = Messages.Female
+                    Text = Messages.IFemale
                 }
             });
         }
