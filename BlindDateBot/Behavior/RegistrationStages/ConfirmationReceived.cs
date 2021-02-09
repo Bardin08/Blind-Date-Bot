@@ -1,8 +1,6 @@
 ﻿using System.Threading.Tasks;
-using System.Linq;
 
 using BlindDateBot.Data.Contexts;
-using BlindDateBot.Data.Repositories;
 using BlindDateBot.Domain.Models;
 using BlindDateBot.Interfaces;
 using BlindDateBot.Models;

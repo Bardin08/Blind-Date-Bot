@@ -8,6 +8,5 @@ namespace BlindDateBot.Data.Contexts
     {
         public DbSet<UserModel> Users { get; set; }
         public DbSet<DateModel> Dates { get; set; }
-        public DbSet<MessageModel> Messages { get; set; }
     }
 }

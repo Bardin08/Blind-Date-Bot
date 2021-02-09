@@ -18,6 +18,12 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Reference Include="TelegramLoggingProvider">
+      <HintPath>..\..\..\TelegramLoggingProvider\TelegramLoggingProvider\bin\Release\net5.0\TelegramLoggingProvider.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
+  <ItemGroup>
     <None Update="appsettings.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
