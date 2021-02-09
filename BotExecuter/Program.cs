@@ -2,15 +2,16 @@
 using System.IO;
 
 using BlindDateBot;
-using BlindDateBot.Data.Contexts;
 using BlindDateBot.Interfaces;
 
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 
 using Serilog;
+
+using TelegramLoggingProvider;
 
 namespace BotExecuter
 {
@@ -18,20 +19,20 @@ namespace BotExecuter
     {
         static void Main()
         {
-            var builder = new ConfigurationBuilder();
-            BuildConfiguration(builder);
+            var configurationBuilder = new ConfigurationBuilder();
+            BuildConfiguration(configurationBuilder);
 
             Log.Logger = new LoggerConfiguration()
-                .ReadFrom.Configuration(builder.Build())
+                .ReadFrom.Configuration(configurationBuilder.Build())
                 .CreateLogger();
 
             var host = Host.CreateDefaultBuilder()
                 .ConfigureServices((_, s) =>
                 {
-                    s.AddSingleton<IBlindDateBotClient>(new BlindDataBotClient(builder.Build()));
+                    s.AddSingleton<IBlindDateBotClient>(new BlindDataBotClient(configurationBuilder.Build()));
                     s.AddSingleton<BlindDateBot.BlindDateBot>();
 
-                    s.AddSingleton<IConfiguration>(builder.Build());
+                    s.AddSingleton<IConfiguration>(configurationBuilder.Build());
                 })
                 .UseSerilog()
                 .Build();

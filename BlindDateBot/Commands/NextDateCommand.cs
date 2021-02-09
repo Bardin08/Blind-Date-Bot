@@ -39,9 +39,9 @@ namespace BlindDateBot.Commands
                 return;
             }
 
-                        var interlocutor = await db.Users.FirstOrDefaultAsync(u => u.IsFree == true
-                                                                       && user.InterlocutorGender == u.Gender
-                                                                       && user.Gender == u.InterlocutorGender
+            var interlocutor = await db.Users.FirstOrDefaultAsync(u => u.IsFree == true
+                                                           && user.InterlocutorGender == u.Gender
+                                                           && user.Gender == u.InterlocutorGender
                                                                        && u.Id != user.Id);
             if (interlocutor == null)
             {
