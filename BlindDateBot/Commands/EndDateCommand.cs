@@ -41,14 +41,15 @@ namespace BlindDateBot.Commands
             db.Update(user);
 
             user = db.Users.Find(date.SecondUser.Id);
+            user.IsFree = true;
             db.Update(user);
 
             date.IsActive = false;
             db.Update(date);
             await db.SaveChangesAsync();
 
-            await botClient.SendTextMessageAsync(date.FirstUser.TelegramId, "Date finished use command /next_date to find a new one");
-            await botClient.SendTextMessageAsync(date.SecondUser.TelegramId, "Date finished use command /next_date to find a new one");
+            await botClient.SendTextMessageAsync(date.FirstUser.TelegramId, Messages.DateEnd);
+            await botClient.SendTextMessageAsync(date.SecondUser.TelegramId, Messages.DateEnd);
 
             DateEnd?.Invoke(date.Id);
         }

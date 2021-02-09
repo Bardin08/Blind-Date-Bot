@@ -90,6 +90,10 @@ namespace BlindDateBot.Processors
                                              userTransaction,
                                              strategy);
             }
+            else
+            {
+                await _botClient.SendTextMessageAsync(message.From.Id, Messages.YouHaventAnActiveDate);
+            }
         }
 
         private async Task ProcessCallbackQuery(CallbackQuery query)
@@ -118,6 +122,7 @@ namespace BlindDateBot.Processors
                 TransactionType.DateMessaging => TransactionProcessStrategy.Date,
                 TransactionType.Command => TransactionProcessStrategy.Command,
                 TransactionType.Registration => TransactionProcessStrategy.Registration,
+                TransactionType.Feedback => TransactionProcessStrategy.Feedback,
                 _ => TransactionProcessStrategy.Default
             };
         }

@@ -44,6 +44,7 @@ namespace BlindDateBot.Processors
             _strategies = new();
 
             StartCommand.RegistrationInitiated += RegistrationInitiated;
+            FeedbackCommamd.FeedbackTransactionInitiaded += FeedbackTransactionInitiaded;
         }
 
         public TransactionProcessStrategy Strategy 
@@ -77,6 +78,18 @@ namespace BlindDateBot.Processors
                                      new SqlServerContext(_config["DB:MsSqlDb:ConnectionString"]));
         }
 
+        private async void FeedbackTransactionInitiaded(FeedbackTransactionModel transaction)
+        {
+            TransactionsContainer.AddTransaction(transaction);
+            Strategy = TransactionProcessStrategy.Feedback;
+
+            await ProcessTransaction(null,
+                         transaction,
+                         _botClient,
+                         _logger,
+                         new SqlServerContext(_config["DB:MsSqlDb:ConnectionString"]));
+        }
+
         private ITransactionProcessingStrategy SelectStrategy()
         {
             ITransactionProcessingStrategy strategy = null;
@@ -89,6 +102,7 @@ namespace BlindDateBot.Processors
                     TransactionProcessStrategy.Command => new CommandProcessStrategy(),
                     TransactionProcessStrategy.Registration => new RegistrationProcessStrategy(),
                     TransactionProcessStrategy.Date => new DateProcessStrategy(),
+                    TransactionProcessStrategy.Feedback => new FeedbackProcessStrategy(),
                     _ => throw new ArgumentException("Incorrect value.", nameof(Strategy)),
                 };
 

@@ -43,6 +43,8 @@ namespace BlindDateBot
         {
             lock (_transactions)
             {
+                _transactions.RemoveAll(t => (t as TransactionBaseModel).IsComplete);
+
                 return _transactions.FirstOrDefault(t => (t as TransactionBaseModel)!.RecipientId.Equals(recipientId));
             }
         }
@@ -59,6 +61,15 @@ namespace BlindDateBot
 
                     _transactions.Add(transaction);
                 }
+            }
+        }
+
+        public static bool DateForUserExists(int userId)
+        {
+            lock(_dates)
+            {
+                return _dates.FirstOrDefault(d => d.Date.FirstUser.TelegramId == userId 
+                                               || d.Date.SecondUser.TelegramId == userId) != null;
             }
         }
     }
