@@ -61,6 +61,15 @@ namespace BlindDateBot {
         }
         
         /// <summary>
+        ///   Ищет локализованную строку, похожую на Ты уже зарегистрирован!.
+        /// </summary>
+        internal static string AlreadyRegisteredUser {
+            get {
+                return ResourceManager.GetString("AlreadyRegisteredUser", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Ищет локализованную строку, похожую на Ошибка распознавание команды.
         /// </summary>
         internal static string CommandNotFoundMessage {
@@ -124,6 +133,18 @@ namespace BlindDateBot {
         internal static string FindDate {
             get {
                 return ResourceManager.GetString("FindDate", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на В этом боте тебе доступны такие команды:
+        ////next_date – переключит тебя на следующего собеседника;
+        ////end_date – позволяет закончить свидание;
+        ////feedback – тут можно оставить свои впечатления после использования бота..
+        /// </summary>
+        internal static string HelpMessage {
+            get {
+                return ResourceManager.GetString("HelpMessage", resourceCulture);
             }
         }
         

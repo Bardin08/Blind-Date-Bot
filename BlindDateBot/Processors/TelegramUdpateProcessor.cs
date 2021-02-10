@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 
 using BlindDateBot.Commands;
 using BlindDateBot.Data.Contexts;
@@ -48,13 +49,20 @@ namespace BlindDateBot.Processors
 
         public async void Process(Update update)
         {
-            if (update.Type == UpdateType.Message)
+            try
             {
-                await ProcessMessage(update.Message);
+                if (update.Type == UpdateType.Message)
+                {
+                    await ProcessMessage(update.Message);
+                }
+                else if (update.Type == UpdateType.CallbackQuery)
+                {
+                    await ProcessCallbackQuery(update.CallbackQuery);
+                }
             }
-            else if (update.Type == UpdateType.CallbackQuery)
+            catch (Exception ex)
             {
-                await ProcessCallbackQuery(update.CallbackQuery);
+                _logger.LogError($"{ex.Message} | Stack trace: {ex.StackTrace}");
             }
         }
 

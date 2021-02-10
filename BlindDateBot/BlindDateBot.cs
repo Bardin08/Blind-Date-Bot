@@ -1,13 +1,12 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 
-using BlindDateBot.Commands;
 using BlindDateBot.Data.Contexts;
 using BlindDateBot.Domain.Models;
 using BlindDateBot.Interfaces;
 using BlindDateBot.Models;
-using BlindDateBot.Models.Enums;
 using BlindDateBot.Options;
 using BlindDateBot.Processors;
 
@@ -51,6 +50,8 @@ namespace BlindDateBot
             _botClient.OnUpdate += UpdateReceived;
 
             _botClient.StartReceiving();
+            _logger.LogDebug("Message receiving has successfully begun at {timestamp}", DateTime.Now);
+
             Thread.Sleep(int.MaxValue);
         }
 
@@ -64,7 +65,6 @@ namespace BlindDateBot
             var dbContext = new SqlServerContext(_config["DB:MsSqlDb:ConnectionString"]);
 
             return dbContext.Dates
-                .Include(d => d.Messages)
                 .Include(d => d.FirstUser)
                 .Include(d => d.SecondUser)
                 .Where(d => d.IsActive == true).ToList();

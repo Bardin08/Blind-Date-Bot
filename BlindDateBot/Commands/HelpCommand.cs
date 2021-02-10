@@ -16,7 +16,7 @@ namespace BlindDateBot.Commands
 
         public async Task Execute(Message message, object transaction, ITelegramBotClient botClient, ILogger logger, SqlServerContext db)
         {
-            await botClient.SendTextMessageAsync(message.From.Id, "Help command");       
+            await botClient.SendTextMessageAsync(message.From.Id, Messages.HelpMessage);       
         }
     }
 }

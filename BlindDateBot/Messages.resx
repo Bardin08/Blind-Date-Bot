@@ -117,6 +117,9 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="AlreadyRegisteredUser" xml:space="preserve">
+    <value>Ты уже зарегистрирован!</value>
+  </data>
   <data name="CommandNotFoundMessage" xml:space="preserve">
     <value>Ошибка распознавание команды</value>
   </data>
@@ -141,6 +144,12 @@
   </data>
   <data name="FindDate" xml:space="preserve">
     <value>Найти свидание</value>
+  </data>
+  <data name="HelpMessage" xml:space="preserve">
+    <value>В этом боте тебе доступны такие команды:
+/next_date – переключит тебя на следующего собеседника;
+/end_date – позволяет закончить свидание;
+/feedback – тут можно оставить свои впечатления после использования бота.</value>
   </data>
   <data name="IFemale" xml:space="preserve">
     <value>Я девушка 👩</value>

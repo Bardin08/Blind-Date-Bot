@@ -3,6 +3,7 @@
 using BlindDateBot.Data.Contexts;
 using BlindDateBot.Interfaces;
 
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 
 using Telegram.Bot;
@@ -18,6 +19,15 @@ namespace BlindDateBot.Commands
 
         public async Task Execute(Message message, object transaction, ITelegramBotClient botClient, ILogger logger, SqlServerContext db)
         {
+            logger.LogDebug("By {username}({userid}) was initiated '/start' command", message.From.Username, message.From.Id);
+            
+            if (await db.Users.FirstOrDefaultAsync(u => u.TelegramId == message.From.Id) != null)
+            {
+                logger.LogDebug("User {username}({userid}) is already registered.");
+                await botClient.SendTextMessageAsync(message.From.Id, Messages.AlreadyRegisteredUser);
+                return;
+            }
+
             var registrationTransaction = new Models.RegistrationTransactionModel(message.From.Id, message.From.Username, message.From.FirstName);
             RegistrationInitiated?.Invoke(registrationTransaction);
             return;

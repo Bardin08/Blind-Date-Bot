@@ -61,9 +61,10 @@ namespace BlindDateBot.Commands
             interlocutor.IsFree = false;
             db.Update(interlocutor);
 
-
             await db.Dates.AddAsync(dateModel);
             await db.SaveChangesAsync();
+
+            logger.LogDebug("New data started. Members: {firstuser}, {seconduser}", user, interlocutor);
 
             await botClient.SendTextMessageAsync(user.TelegramId, Messages.DateHasBegan);
             await botClient.SendTextMessageAsync(interlocutor.TelegramId, Messages.DateHasBegan);

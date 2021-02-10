@@ -26,14 +26,13 @@ namespace BlindDateBot.Behavior.DateStages
                 currentTransaction.Date.SecondUser,
             };
 
-            var messageModel = new MessageModel()
+            var messageObject = new 
             {
                 From = users.Where(u => u.TelegramId == message.From.Id).First(),
                 To = users.Where(u => u.TelegramId != message.From.Id).First(),
-                Text = message.Text
             };
 
-            ForwardMessage(message, messageModel.To, botClient);
+            ForwardMessage(message, messageObject.To, botClient);
         }
 
         private async void ForwardMessage(Message message, UserModel recipient, ITelegramBotClient botClient)
