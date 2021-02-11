@@ -50,6 +50,15 @@ namespace BlindDateBot.Data.Migrations
                         .HasColumnName("user_id")
                         .UseIdentityColumn();
 
+                    b.Property<string>("BlockReason")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("nvarchar(max)")
+                        .HasDefaultValue("")
+                        .HasColumnName("block_reason");
+
+                    b.Property<int>("ComplaintsAmount")
+                        .HasColumnType("int");
+
                     b.Property<int>("Gender")
                         .HasColumnType("int")
                         .HasColumnName("user_gender");
@@ -58,9 +67,21 @@ namespace BlindDateBot.Data.Migrations
                         .HasColumnType("int")
                         .HasColumnName("interlocutor_gender");
 
+                    b.Property<bool>("IsBlocked")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(false)
+                        .HasColumnName("is_blocked");
+
                     b.Property<bool>("IsFree")
                         .HasColumnType("bit")
                         .HasColumnName("is_free");
+
+                    b.Property<bool>("IsVisible")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(false)
+                        .HasColumnName("is_visible");
 
                     b.Property<int>("TelegramId")
                         .HasColumnType("int");

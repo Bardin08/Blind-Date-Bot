@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 
 using BlindDateBot.Data.Contexts;
 using BlindDateBot.Models;
@@ -14,7 +15,10 @@ namespace BlindDateBot.Strategies
     {
         public async Task ProcessTransaction(Message message, object transaction, ITelegramBotClient botClient, ILogger logger, SqlServerContext db)
         {
-            await (transaction as DateTransactionModel)?.State.ProcessTransaction(message, transaction, botClient, logger, db);   
+            if (message != null)
+            {
+                await (transaction as DateTransactionModel)?.State.ProcessTransaction(message, transaction, botClient, logger, db);
+            }
         }
     }
 }
