@@ -22,6 +22,8 @@ namespace BlindDateBot.Commands
 
         public async Task Execute(Message message, object transaction, ITelegramBotClient botClient, ILogger logger, SqlServerContext db)
         {
+            logger.LogDebug("Next date command was initiated by {username}({userid})", message.From.Username, message.From.Id);
+
             var currentTransaction = transaction as TransactionBaseModel;
 
             if (TransactionsContainer.DateForUserExists(currentTransaction.RecipientId))
@@ -33,16 +35,23 @@ namespace BlindDateBot.Commands
             await botClient.SendTextMessageAsync(currentTransaction.RecipientId, Messages.DateSearchText);
 
             var user = await db.Users.FirstOrDefaultAsync(u => u.TelegramId == currentTransaction.RecipientId);
+
+
             if (user == null)
             {
                 await botClient.SendTextMessageAsync(currentTransaction.RecipientId, Messages.InternalErrorUserNotFound);
                 return;
             }
 
+            user.IsVisible = true;
+            db.Update(user);
+            await db.SaveChangesAsync();
+
             var interlocutor = await db.Users.FirstOrDefaultAsync(u => u.IsFree == true
                                                            && user.InterlocutorGender == u.Gender
                                                            && user.Gender == u.InterlocutorGender
-                                                                       && u.Id != user.Id);
+                                                           && u.Id != user.Id
+                                                           && u.IsVisible);
             if (interlocutor == null)
             {
                 return;
@@ -54,7 +63,8 @@ namespace BlindDateBot.Commands
                 SecondUser = interlocutor,
                 IsActive = true
             };
-
+            
+            
             user.IsFree = false;
             db.Update(user);
 

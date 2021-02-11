@@ -22,6 +22,8 @@ namespace BlindDateBot.Commands
 
         public async Task Execute(Message message, object transaction, ITelegramBotClient botClient, ILogger logger, SqlServerContext db)
         {
+            logger.LogDebug("End date command was initiated by {username}({userid})", message.From.Username, message.From.Id);
+
             var cuurentTransaction = transaction as CommandTransactionModel;
 
             var date = db.Dates

@@ -14,13 +14,15 @@ namespace BlindDateBot.Commands
 {
     public class FeedbackCommamd : IBotCommand
     {
-        public static event FeedbackTransactionInitiaded FeedbackTransactionInitiaded;
+        public static event FeedbackTransactionInitiaded FeedbackTransactionInitiated;
 
         public string Name => "/feedback";
 
         public async Task Execute(Message message, object transaction, ITelegramBotClient botClient, ILogger logger, SqlServerContext db)
         {
-            FeedbackTransactionInitiaded?.Invoke(new FeedbackTransactionModel(message.From.Id));
+            logger.LogDebug("Feedback command was initiated by {username}({userid})", message.From.Username, message.From.Id);
+
+            FeedbackTransactionInitiated?.Invoke(new FeedbackTransactionModel(message.From.Id));
             return;
         }
     }
