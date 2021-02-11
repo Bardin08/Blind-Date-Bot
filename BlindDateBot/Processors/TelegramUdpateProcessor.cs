@@ -49,6 +49,8 @@ namespace BlindDateBot.Processors
 
         public async void Process(Update update)
         {
+            _logger.LogDebug("Update {updateId} received. Update type is {updateType}",
+                             update.Id, update.Type.ToString());
             try
             {
                 if (update.Type == UpdateType.Message)
@@ -115,12 +117,20 @@ namespace BlindDateBot.Processors
 
         private async void ExecuteTransactionProcessing(Message message, object transaction, TransactionProcessStrategy strategy)
         {
-            _transactionsProcessor.Strategy = strategy;
-            await _transactionsProcessor.ProcessTransaction(message,
-                                                            transaction,
-                                                            _botClient,
-                                                            _logger,
-                                                            new SqlServerContext(_config["DB:MsSqlDb:ConnectionString"]));
+            try
+            {
+                _transactionsProcessor.Strategy = strategy;
+                await _transactionsProcessor.ProcessTransaction(message,
+                                                                transaction,
+                                                                _botClient,
+                                                                _logger,
+                                                                new SqlServerContext(_config["DB:MsSqlDb:ConnectionString"]));
+
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
         }
 
         private static TransactionProcessStrategy SelectStrategy(TransactionBaseModel transaction)
@@ -131,6 +141,7 @@ namespace BlindDateBot.Processors
                 TransactionType.Command => TransactionProcessStrategy.Command,
                 TransactionType.Registration => TransactionProcessStrategy.Registration,
                 TransactionType.Feedback => TransactionProcessStrategy.Feedback,
+                TransactionType.Report => TransactionProcessStrategy.Report,
                 _ => TransactionProcessStrategy.Default
             };
         }

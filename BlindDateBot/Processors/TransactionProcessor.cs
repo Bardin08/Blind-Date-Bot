@@ -44,7 +44,8 @@ namespace BlindDateBot.Processors
             _strategies = new();
 
             StartCommand.RegistrationInitiated += RegistrationInitiated;
-            FeedbackCommamd.FeedbackTransactionInitiaded += FeedbackTransactionInitiaded;
+            FeedbackCommamd.FeedbackTransactionInitiated += FeedbackTransactionInitiated;
+            ReportCommand.ReportInitiated += ReportInitiated;
         }
 
         public TransactionProcessStrategy Strategy 
@@ -57,13 +58,18 @@ namespace BlindDateBot.Processors
 
         public async Task ProcessTransaction(Message message, object transaction, ITelegramBotClient botClient, ILogger logger, SqlServerContext db)
         {
-            foreach (var id in (transaction as TransactionBaseModel).MessageIds)
+            var currentTransaction = transaction as TransactionBaseModel;
+
+            foreach (var id in currentTransaction.MessageIds)
             {
                 await botClient.DeleteMessageAsync(message.Chat.Id, id);
             }
-            (transaction as TransactionBaseModel).MessageIds.Clear();
+            currentTransaction.MessageIds.Clear();
 
             await SelectStrategy().ProcessTransaction(message, transaction, botClient, logger, db);
+
+            _logger.LogDebug("Transaction {transactionId} is processing as {transactionType}",
+                             currentTransaction.TransactionId, currentTransaction.TransactionType.ToString());
         }
 
         private async void RegistrationInitiated(RegistrationTransactionModel transaction)
@@ -71,24 +77,37 @@ namespace BlindDateBot.Processors
             TransactionsContainer.AddTransaction(transaction);
             Strategy = TransactionProcessStrategy.Registration;
 
-            await ProcessTransaction(null,
+            await ProcessTransaction(new Message(),
                                      transaction,
                                      _botClient,
                                      _logger,
                                      new SqlServerContext(_config["DB:MsSqlDb:ConnectionString"]));
         }
 
-        private async void FeedbackTransactionInitiaded(FeedbackTransactionModel transaction)
+        private async void FeedbackTransactionInitiated(FeedbackTransactionModel transaction)
         {
             TransactionsContainer.AddTransaction(transaction);
             Strategy = TransactionProcessStrategy.Feedback;
 
-            await ProcessTransaction(null,
-                         transaction,
-                         _botClient,
-                         _logger,
-                         new SqlServerContext(_config["DB:MsSqlDb:ConnectionString"]));
+            await ProcessTransaction(new Message(),
+                                     transaction,
+                                     _botClient,
+                                     _logger,
+                                      new SqlServerContext(_config["DB:MsSqlDb:ConnectionString"]));
         }
+
+        private async void ReportInitiated(ReportTransactionModel transaction)
+        {
+            TransactionsContainer.AddTransaction(transaction);
+            Strategy = TransactionProcessStrategy.Report;
+
+            await ProcessTransaction(new Message(),
+                                     transaction,
+                                     _botClient,
+                                     _logger,
+                                     new SqlServerContext(_config["DB:MsSqlDb:ConnectionString"]));
+        }
+
 
         private ITransactionProcessingStrategy SelectStrategy()
         {
@@ -103,6 +122,7 @@ namespace BlindDateBot.Processors
                     TransactionProcessStrategy.Registration => new RegistrationProcessStrategy(),
                     TransactionProcessStrategy.Date => new DateProcessStrategy(),
                     TransactionProcessStrategy.Feedback => new FeedbackProcessStrategy(),
+                    TransactionProcessStrategy.Report => new ReportProcessStrategy(),
                     _ => throw new ArgumentException("Incorrect value.", nameof(Strategy)),
                 };
 
