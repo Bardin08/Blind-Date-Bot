@@ -39,6 +39,7 @@ namespace BlindDateBot.Commands
             }
 
             UserModel user = db.Users.Find(date.FirstUser.Id);
+            user.IsVisible = false;
             user.IsFree = true;
             db.Update(user);
 

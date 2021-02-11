@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Threading.Tasks;
 
 using BlindDateBot.Data.Contexts;
@@ -36,7 +37,6 @@ namespace BlindDateBot.Commands
 
             var user = await db.Users.FirstOrDefaultAsync(u => u.TelegramId == currentTransaction.RecipientId);
 
-
             if (user == null)
             {
                 await botClient.SendTextMessageAsync(currentTransaction.RecipientId, Messages.InternalErrorUserNotFound);
@@ -47,11 +47,15 @@ namespace BlindDateBot.Commands
             db.Update(user);
             await db.SaveChangesAsync();
 
-            var interlocutor = await db.Users.FirstOrDefaultAsync(u => u.IsFree == true
+            Random rnd = new();
+
+            var possibleInterlocutors = await db.Users.Where(u => u.IsFree == true
                                                            && user.InterlocutorGender == u.Gender
                                                            && user.Gender == u.InterlocutorGender
                                                            && u.Id != user.Id
-                                                           && u.IsVisible);
+                                                           && u.IsVisible).ToListAsync();
+
+            var interlocutor = possibleInterlocutors[rnd.Next(0, possibleInterlocutors.Count - 1)];
             if (interlocutor == null)
             {
                 return;
@@ -63,8 +67,7 @@ namespace BlindDateBot.Commands
                 SecondUser = interlocutor,
                 IsActive = true
             };
-            
-            
+                        
             user.IsFree = false;
             db.Update(user);
 

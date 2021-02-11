@@ -21,12 +21,11 @@ namespace BlindDateBot.Commands
         {
             logger.LogDebug("Start command was initiated by {username}({userid})", message.From.Username, message.From.Id);
 
-            //if (await db.Users.FirstOrDefaultAsync(u => u.TelegramId == message.From.Id) != null)
-            //{
-            //    logger.LogDebug("User {username}({userid}) is already registered.");
-            //    await botClient.SendTextMessageAsync(message.From.Id, Messages.AlreadyRegisteredUser);
-            //    return;
-            //}
+            if (TransactionsContainer.DateForUserExists(message.From.Id))
+            {
+                await botClient.SendTextMessageAsync(message.From.Id, Messages.YouHaveAnActiveDate);
+                return;
+            }
 
             var registrationTransaction = new Models.RegistrationTransactionModel(message.From.Id, message.From.Username, message.From.FirstName);
             RegistrationInitiated?.Invoke(registrationTransaction);

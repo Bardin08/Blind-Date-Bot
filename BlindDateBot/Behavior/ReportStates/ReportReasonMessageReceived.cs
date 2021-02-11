@@ -47,8 +47,14 @@ namespace BlindDateBot.Behavior.ReportStates
             await db.SaveChangesAsync();
 
             await botClient.SendTextMessageAsync(currentTransaction.RecipientId, Messages.YourReportSent);
-            currentTransaction.IsComplete = true; 
-            // TODO: Закончить свидание!
+            currentTransaction.IsComplete = true;
+
+            await new Commands.EndDateCommand()
+                .Execute(new Message() { Text = "/end_date", From = new User { Id = currentTransaction.RecipientId } },
+                         new CommandTransactionModel(currentTransaction.RecipientId),
+                         botClient,
+                         logger,
+                         db);
         }
     }
 }

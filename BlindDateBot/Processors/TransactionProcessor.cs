@@ -9,6 +9,7 @@ using BlindDateBot.Models;
 using BlindDateBot.Models.Enums;
 using BlindDateBot.Strategies;
 
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 
@@ -58,6 +59,12 @@ namespace BlindDateBot.Processors
 
         public async Task ProcessTransaction(Message message, object transaction, ITelegramBotClient botClient, ILogger logger, SqlServerContext db)
         {
+            if ((await db.Users.FirstOrDefaultAsync(u => u.TelegramId == message.From.Id))?.IsBlocked == true)
+            {
+                await botClient.SendTextMessageAsync(message.From.Id, Messages.YourAccountIsBlocked);
+                return;
+            }
+
             var currentTransaction = transaction as TransactionBaseModel;
 
             foreach (var id in currentTransaction.MessageIds)
@@ -77,7 +84,7 @@ namespace BlindDateBot.Processors
             TransactionsContainer.AddTransaction(transaction);
             Strategy = TransactionProcessStrategy.Registration;
 
-            await ProcessTransaction(new Message(),
+            await ProcessTransaction(new Message() { From = new User { Id = transaction.RecipientId } },
                                      transaction,
                                      _botClient,
                                      _logger,
@@ -89,7 +96,7 @@ namespace BlindDateBot.Processors
             TransactionsContainer.AddTransaction(transaction);
             Strategy = TransactionProcessStrategy.Feedback;
 
-            await ProcessTransaction(new Message(),
+            await ProcessTransaction(new Message() { From = new User { Id = transaction.RecipientId } },
                                      transaction,
                                      _botClient,
                                      _logger,
@@ -101,13 +108,12 @@ namespace BlindDateBot.Processors
             TransactionsContainer.AddTransaction(transaction);
             Strategy = TransactionProcessStrategy.Report;
 
-            await ProcessTransaction(new Message(),
+            await ProcessTransaction(new Message() { From = new User { Id = transaction.RecipientId } },
                                      transaction,
                                      _botClient,
                                      _logger,
                                      new SqlServerContext(_config["DB:MsSqlDb:ConnectionString"]));
         }
-
 
         private ITransactionProcessingStrategy SelectStrategy()
         {

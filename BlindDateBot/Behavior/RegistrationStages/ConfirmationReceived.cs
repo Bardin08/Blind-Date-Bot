@@ -108,7 +108,7 @@ namespace BlindDateBot.Behavior.RegistrationStages
                 new InlineKeyboardButton()
                 {
                     Text = Messages.FindDate,
-                    CallbackData = "/next_date"
+                    CallbackData = "/next_date",
                 }
            });
         }
