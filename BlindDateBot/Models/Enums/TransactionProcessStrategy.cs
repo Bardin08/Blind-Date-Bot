@@ -6,6 +6,7 @@
         Command = 1,
         Registration = 2,
         Date = 3,
-        Feedback = 4
+        Feedback = 4,
+        Report = 5
     }
 }

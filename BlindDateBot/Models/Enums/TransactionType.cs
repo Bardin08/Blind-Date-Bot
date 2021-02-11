@@ -5,6 +5,7 @@
         DateMessaging,
         Command,
         Registration,
-        Feedback
+        Feedback,
+        Report
     }
 }

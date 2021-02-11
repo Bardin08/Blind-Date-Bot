@@ -203,6 +203,15 @@ namespace BlindDateBot {
         }
         
         /// <summary>
+        ///   Ищет локализованную строку, похожую на У тебя сейчас нет активных свиданий, нельзя отправить жалобу просто так!.
+        /// </summary>
+        internal static string NoActiveDate {
+            get {
+                return ResourceManager.GetString("NoActiveDate", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Ищет локализованную строку, похожую на Регистрация прошла успешно. Скоро ты сможешь познакомиться с человеком..
         /// </summary>
         internal static string RegistrationComplete {
@@ -221,11 +230,29 @@ namespace BlindDateBot {
         }
         
         /// <summary>
+        ///   Ищет локализованную строку, похожую на Опиши, пожалуйста, причину жалобы *одним сообщением*..
+        /// </summary>
+        internal static string ReportInitiated {
+            get {
+                return ResourceManager.GetString("ReportInitiated", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Ищет локализованную строку, похожую на Кто тебе интересен?.
         /// </summary>
         internal static string SelectInterlocuterGender {
             get {
                 return ResourceManager.GetString("SelectInterlocuterGender", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на Кто-то на тебя пожаловался!.
+        /// </summary>
+        internal static string SomebodyComplainedAboutYou {
+            get {
+                return ResourceManager.GetString("SomebodyComplainedAboutYou", resourceCulture);
             }
         }
         
@@ -262,6 +289,24 @@ namespace BlindDateBot {
         internal static string YouHaventAnActiveDate {
             get {
                 return ResourceManager.GetString("YouHaventAnActiveDate", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на На тебя поступило слишком много жалоб, поэтому мы решили временно заблокировать твой аккаунт..
+        /// </summary>
+        internal static string YourAccountBlocked {
+            get {
+                return ResourceManager.GetString("YourAccountBlocked", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на Жалоба отправленна.  .
+        /// </summary>
+        internal static string YourReportSent {
+            get {
+                return ResourceManager.GetString("YourReportSent", resourceCulture);
             }
         }
     }

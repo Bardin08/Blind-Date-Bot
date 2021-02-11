@@ -169,6 +169,9 @@
   <data name="No" xml:space="preserve">
     <value>Нет❌</value>
   </data>
+  <data name="NoActiveDate" xml:space="preserve">
+    <value>У тебя сейчас нет активных свиданий, нельзя отправить жалобу просто так!</value>
+  </data>
   <data name="RegistrationComplete" xml:space="preserve">
     <value>Регистрация прошла успешно. Скоро ты сможешь познакомиться с человеком.</value>
   </data>
@@ -176,8 +179,14 @@
     <value>Привет! Этот бот создан для анонимного общения в День Святого Валентина. Укажи свой пол и пол человека, с которым хочешь поговорить.</value>
     <comment>+ SelectGenderMessage</comment>
   </data>
+  <data name="ReportInitiated" xml:space="preserve">
+    <value>Опиши, пожалуйста, причину жалобы *одним сообщением*.</value>
+  </data>
   <data name="SelectInterlocuterGender" xml:space="preserve">
     <value>Кто тебе интересен?</value>
+  </data>
+  <data name="SomebodyComplainedAboutYou" xml:space="preserve">
+    <value>Кто-то на тебя пожаловался!</value>
   </data>
   <data name="SomethingWentWrong" xml:space="preserve">
     <value>Smth went wrong. Try again</value>
@@ -190,5 +199,11 @@
   </data>
   <data name="YouHaventAnActiveDate" xml:space="preserve">
     <value>У тебя сейчас нет активного свидания, используй команду /next_date, чтобы найти его.</value>
+  </data>
+  <data name="YourAccountBlocked" xml:space="preserve">
+    <value>На тебя поступило слишком много жалоб, поэтому мы решили временно заблокировать твой аккаунт.</value>
+  </data>
+  <data name="YourReportSent" xml:space="preserve">
+    <value>Жалоба отправленна.  </value>
   </data>
 </root>
