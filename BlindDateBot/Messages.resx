@@ -203,6 +203,9 @@
   <data name="YourAccountBlocked" xml:space="preserve">
     <value>На тебя поступило слишком много жалоб, поэтому мы решили временно заблокировать твой аккаунт.</value>
   </data>
+  <data name="YourAccountIsBlocked" xml:space="preserve">
+    <value>Твой аккаунт заблокирован. Ожидай снятия бана.</value>
+  </data>
   <data name="YourReportSent" xml:space="preserve">
     <value>Жалоба отправленна.  </value>
   </data>

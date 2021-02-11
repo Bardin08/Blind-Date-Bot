@@ -2,6 +2,6 @@
 {
     public static class Constants
     {
-        public const long FeedbackChannelId = -1001258983112;
+        public const string FeedbackChannelId = "-1001258983112";
     }
 }

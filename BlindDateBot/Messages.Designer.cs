@@ -302,6 +302,15 @@ namespace BlindDateBot {
         }
         
         /// <summary>
+        ///   Ищет локализованную строку, похожую на Твой аккаунт заблокирован. Ожидай снятия бана..
+        /// </summary>
+        internal static string YourAccountIsBlocked {
+            get {
+                return ResourceManager.GetString("YourAccountIsBlocked", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Ищет локализованную строку, похожую на Жалоба отправленна.  .
         /// </summary>
         internal static string YourReportSent {
