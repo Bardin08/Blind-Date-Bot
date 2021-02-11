@@ -8,10 +8,20 @@ namespace BlindDateBot.Domain.Models
     {
         public int Id { get; set; }
         public int TelegramId { get; set; }
+        public int ComplaintsAmount{ get; set; }
         public string Username { get; set; }
+        public string BlockReason{ get; set; }
         public Gender Gender { get; set; }
         public Gender InterlocutorGender{ get; set; }
         public bool IsFree { get; set; }
+        public bool IsVisible { get; set; }
+        public bool IsBlocked { get; set; }
+
+        public UserModel()
+        {
+            IsFree = true;
+            IsVisible = false;
+        }
 
         public override bool Equals(object obj)
         {
