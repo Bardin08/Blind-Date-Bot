@@ -27,7 +27,8 @@ namespace BlindDateBot
         private readonly ILogger<BlindDateBot> _logger;
         private readonly IConfiguration _config;
 
-        private TelegramUdpateProcessor _updateProcessor;
+        private readonly TelegramUdpateProcessor _updateProcessor;
+        private readonly EventsProcessor _eventsProcessor;
 
         public BlindDateBot(IBlindDateBotClient botClient, ILogger<BlindDateBot> logger, IConfiguration config)
         {
@@ -38,6 +39,7 @@ namespace BlindDateBot
             _options = botClient.Options;
 
             _updateProcessor = new(_botClient, logger, config);
+            _eventsProcessor = new EventsProcessor(botClient.BotClient, logger, config);
 
             foreach (var date in LoadDatesFromDatabase())
             {
