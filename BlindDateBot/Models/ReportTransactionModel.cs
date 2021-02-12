@@ -1,6 +1,6 @@
-﻿using BlindDateBot.Behavior.ReportStates;
+﻿using BlindDateBot.Abstractions;
+using BlindDateBot.Behavior.ReportStates;
 using BlindDateBot.Domain.Models;
-using BlindDateBot.Interfaces;
 
 namespace BlindDateBot.Models
 {

@@ -1,9 +1,8 @@
 ﻿using System.Linq;
 using System.Threading.Tasks;
-
+using BlindDateBot.Abstractions;
 using BlindDateBot.Data.Contexts;
 using BlindDateBot.Domain.Models;
-using BlindDateBot.Interfaces;
 using BlindDateBot.Models;
 
 using Microsoft.EntityFrameworkCore;

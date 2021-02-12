@@ -1,11 +1,8 @@
 ﻿using System;
-using System.Threading.Tasks;
-
 using BlindDateBot.Data.Contexts;
 using BlindDateBot.Models;
 using BlindDateBot.Models.Enums;
 
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 
@@ -21,7 +18,6 @@ namespace BlindDateBot.Processors
         private readonly IConfiguration _config;
 
         private readonly ITelegramBotClient _botClient;
-        private readonly SqlServerContext _db;
 
         private readonly TransactionProcessor _transactionsProcessor;
 
@@ -31,13 +27,11 @@ namespace BlindDateBot.Processors
             _config = config;
 
             _botClient = botClient;
-            _db = new SqlServerContext(_config["DB:MsSqlDb:ConnectionString"]);
 
             _transactionsProcessor = new TransactionProcessor(botClient, logger);
-
         }
 
-        public async void Process(Update update)
+        public void Process(Update update)
         {
             _logger.LogDebug("Update {updateId} received. Update type is {updateType}",
                              update.Id, update.Type.ToString());
@@ -45,11 +39,11 @@ namespace BlindDateBot.Processors
             {
                 if (update.Type == UpdateType.Message)
                 {
-                    await ProcessMessage(update.Message);
+                    ProcessMessage(update.Message);
                 }
                 else if (update.Type == UpdateType.CallbackQuery)
                 {
-                    await ProcessCallbackQuery(update.CallbackQuery);
+                    ProcessCallbackQuery(update.CallbackQuery);
                 }
             }
             catch (Exception ex)
@@ -58,9 +52,9 @@ namespace BlindDateBot.Processors
             }
         }
 
-        private async Task ProcessMessage(Message message)
+        private void ProcessMessage(Message message)
         {
-            if (!await IsMessageValidIfNotInformUser(message))
+            if (!IsMessageValidIfNotInformUser(message))
             {
                 return;
             }
@@ -88,39 +82,23 @@ namespace BlindDateBot.Processors
             }
         }
 
-        private async void InformUser(int userTelegramId, string message)
-        {
-            await _botClient.SendTextMessageAsync(userTelegramId, message);
-        }
-
-        private async Task ProcessCallbackQuery(CallbackQuery query)
+        private void ProcessCallbackQuery(CallbackQuery query)
         {
             var message = query.Message;
             message.Text = query.Data;
             message.From.Id = (int)message.Chat.Id;
 
-            await ProcessMessage(message);
+            ProcessMessage(message);
         }
 
-        private async Task<bool> IsMessageValidIfNotInformUser(Message message)
+        private async void InformUser(int userTelegramId, string message)
         {
-            if (message == null)
-            {
-                return false;
-            }
-            
-            if (await IsUserBlock(message.From.Id))
-            {
-                InformUser(message.From.Id, Messages.YourAccountBlocked);
-                return false;
-            }
-
-            return true;
+            await _botClient.SendTextMessageAsync(userTelegramId, message);
         }
 
-        private async Task<bool> IsUserBlock(int userTelegramId)
+        private static bool IsMessageValidIfNotInformUser(Message message)
         {
-            return (await _db.Users.FirstOrDefaultAsync(u => u.TelegramId == userTelegramId))?.IsBlocked == true;
+            return message != null;
         }
 
         private static object? GetUserTransaction(Message message)

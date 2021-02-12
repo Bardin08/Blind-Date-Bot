@@ -1,4 +1,4 @@
-﻿using BlindDateBot.Interfaces;
+﻿using BlindDateBot.Abstractions;
 using BlindDateBot.Options;
 
 using Microsoft.Extensions.Configuration;

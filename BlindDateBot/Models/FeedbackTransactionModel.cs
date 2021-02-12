@@ -1,5 +1,5 @@
-﻿using BlindDateBot.Behavior.FeedbackStates;
-using BlindDateBot.Interfaces;
+﻿using BlindDateBot.Abstractions;
+using BlindDateBot.Behavior.FeedbackStates;
 
 namespace BlindDateBot.Models
 {

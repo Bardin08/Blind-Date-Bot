@@ -1,5 +1,5 @@
 ﻿using System.Threading.Tasks;
-
+using BlindDateBot.Abstractions;
 using BlindDateBot.Data.Contexts;
 using BlindDateBot.Models;
 
@@ -10,7 +10,7 @@ using Telegram.Bot.Types;
 
 namespace BlindDateBot.Behavior.FeedbackStates
 {
-    public class FeedbackMessageReceived : Interfaces.IFeedbackTransactionState
+    public class FeedbackMessageReceived : IFeedbackTransactionState
     {
         public async Task ProcessTransaction(Message message, object transaction, ITelegramBotClient botClient, ILogger logger, SqlServerContext db)
         {

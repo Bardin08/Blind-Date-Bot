@@ -1,5 +1,5 @@
 ﻿using System.Threading.Tasks;
-
+using BlindDateBot.Abstractions;
 using BlindDateBot.Data.Contexts;
 using BlindDateBot.Models;
 
@@ -11,7 +11,7 @@ using Telegram.Bot.Types;
 
 namespace BlindDateBot.Commands
 {
-    public class VisibleCommand : Interfaces.IBotCommand
+    public class VisibleCommand : IBotCommand
     {
         public string Name => "/visible";
 

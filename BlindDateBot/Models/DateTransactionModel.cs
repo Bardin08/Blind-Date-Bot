@@ -1,6 +1,6 @@
-﻿using BlindDateBot.Behavior.DateStages;
+﻿using BlindDateBot.Abstractions;
+using BlindDateBot.Behavior.DateStages;
 using BlindDateBot.Domain.Models;
-using BlindDateBot.Interfaces;
 
 namespace BlindDateBot.Models
 {

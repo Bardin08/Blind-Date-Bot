@@ -1,5 +1,5 @@
 ﻿using System.Threading.Tasks;
-
+using BlindDateBot.Abstractions;
 using BlindDateBot.Data.Contexts;
 using BlindDateBot.Models;
 
@@ -11,7 +11,7 @@ using Telegram.Bot.Types.ReplyMarkups;
 
 namespace BlindDateBot.Behavior.RegistrationStages
 {
-    public class RegistrationInitiated : Interfaces.IRegistrationTransactionState
+    public class RegistrationInitiated : IRegistrationTransactionState
     {
         public async Task ProcessTransaction(
             Message message,

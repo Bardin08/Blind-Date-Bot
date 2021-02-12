@@ -1,8 +1,7 @@
 ﻿using System.Threading.Tasks;
-
+using BlindDateBot.Abstractions;
 using BlindDateBot.Data.Contexts;
 using BlindDateBot.Domain.Models.Enums;
-using BlindDateBot.Interfaces;
 using BlindDateBot.Models;
 
 using Microsoft.Extensions.Logging;

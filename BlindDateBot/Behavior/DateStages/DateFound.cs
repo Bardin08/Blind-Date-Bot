@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-
+using BlindDateBot.Abstractions;
 using BlindDateBot.Data.Contexts;
 using BlindDateBot.Domain.Models;
 
@@ -14,7 +14,7 @@ using Telegram.Bot.Types.InputFiles;
 
 namespace BlindDateBot.Behavior.DateStages
 {
-    public class DateFound : Interfaces.IDateTransactionState
+    public class DateFound : IDateTransactionState
     {
         public async Task ProcessTransaction(Message message, object transaction, ITelegramBotClient botClient, ILogger logger, SqlServerContext db)
         {

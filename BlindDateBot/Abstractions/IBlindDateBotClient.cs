@@ -1,8 +1,7 @@
 ﻿using BlindDateBot.Options;
-
 using Telegram.Bot;
 
-namespace BlindDateBot.Interfaces
+namespace BlindDateBot.Abstractions
 {
     public interface IBlindDateBotClient
     {
