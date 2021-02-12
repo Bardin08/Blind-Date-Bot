@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Threading.Tasks;
-
-using BlindDateBot.Commands;
 using BlindDateBot.Data.Contexts;
 using BlindDateBot.Models;
 using BlindDateBot.Models.Enums;
@@ -31,23 +28,10 @@ namespace BlindDateBot.Processors
 
             _botClient = botClient;
 
-            _transactionsProcessor = new(botClient, logger, config);
-
-            NextDateCommand.DateFound += DateFound;
-            EndDateCommand.DateEnd += DateEnd;
+            _transactionsProcessor = new TransactionProcessor(botClient, logger);
         }
 
-        private void DateEnd(string dateId)
-        {
-            TransactionsContainer.RemoveDate(dateId);
-        }
-
-        private void DateFound(DateTransactionModel transaction)
-        {
-            TransactionsContainer.AddDate(transaction);
-        }
-
-        public async void Process(Update update)
+        public void Process(Update update)
         {
             _logger.LogDebug("Update {updateId} received. Update type is {updateType}",
                              update.Id, update.Type.ToString());
@@ -55,11 +39,11 @@ namespace BlindDateBot.Processors
             {
                 if (update.Type == UpdateType.Message)
                 {
-                    await ProcessMessage(update.Message);
+                    ProcessMessage(update.Message);
                 }
                 else if (update.Type == UpdateType.CallbackQuery)
                 {
-                    await ProcessCallbackQuery(update.CallbackQuery);
+                    ProcessCallbackQuery(update.CallbackQuery);
                 }
             }
             catch (Exception ex)
@@ -68,51 +52,65 @@ namespace BlindDateBot.Processors
             }
         }
 
-        private async Task ProcessMessage(Message message)
+        private void ProcessMessage(Message message)
         {
-            if (message == null)
+            if (!IsMessageValidIfNotInformUser(message))
             {
                 return;
             }
 
-            object userTransaction = TransactionsContainer.GetTransactionByRecipientId(message.From.Id);
-
-            if (userTransaction is null)
-            {
-                userTransaction = TransactionsContainer.GetDateTransactionByRecipientId(message.From.Id);
-            }
+            object userTransaction = GetUserTransaction(message);
 
             var strategy = TransactionProcessStrategy.Default;
-
             if (message.Text?.StartsWith("/") == true)
             {
                 strategy = TransactionProcessStrategy.Command;
-                userTransaction = new CommandTransactionModel(message.From.Id);
+                userTransaction = new CommandTransactionModel(message);
             }
             else if (userTransaction != null)
             {
-                strategy = SelectStrategy(userTransaction as TransactionBaseModel);
+                strategy = SelectStrategy(userTransaction as BaseTransactionModel);
             }
 
             if (userTransaction != null)
             {
-                ExecuteTransactionProcessing(message,
-                                             userTransaction,
-                                             strategy);
+                ExecuteTransactionProcessing(message, userTransaction, strategy);
             }
             else
             {
-                await _botClient.SendTextMessageAsync(message.From.Id, Messages.YouHaventAnActiveDate);
+                InformUser(message.From.Id, Messages.YouHaventAnActiveDate);
             }
         }
 
-        private async Task ProcessCallbackQuery(CallbackQuery query)
+        private void ProcessCallbackQuery(CallbackQuery query)
         {
             var message = query.Message;
             message.Text = query.Data;
             message.From.Id = (int)message.Chat.Id;
 
-            await ProcessMessage(message);
+            ProcessMessage(message);
+        }
+
+        private async void InformUser(int userTelegramId, string message)
+        {
+            await _botClient.SendTextMessageAsync(userTelegramId, message);
+        }
+
+        private static bool IsMessageValidIfNotInformUser(Message message)
+        {
+            return message != null;
+        }
+
+        private static object? GetUserTransaction(Message message)
+        {
+            object userTransaction = TransactionsContainer.GetTransactionByRecipientId(message.From.Id);
+
+            if (userTransaction == null)
+            {
+                userTransaction = TransactionsContainer.GetDateTransactionByRecipientId(message.From.Id);
+            }
+
+            return userTransaction;
         }
 
         private async void ExecuteTransactionProcessing(Message message, object transaction, TransactionProcessStrategy strategy)
@@ -120,20 +118,17 @@ namespace BlindDateBot.Processors
             try
             {
                 _transactionsProcessor.Strategy = strategy;
-                await _transactionsProcessor.ProcessTransaction(message,
-                                                                transaction,
-                                                                _botClient,
-                                                                _logger,
-                                                                new SqlServerContext(_config["DB:MsSqlDb:ConnectionString"]));
+                await _transactionsProcessor.ProcessTransaction(message, transaction,
+                    new SqlServerContext(_config["DB:MsSqlDb:ConnectionString"]));
 
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex.Message);
+                _logger.LogError($"{ex.Message} | Stack trace: {ex.StackTrace}");
             }
         }
 
-        private static TransactionProcessStrategy SelectStrategy(TransactionBaseModel transaction)
+        private static TransactionProcessStrategy SelectStrategy(BaseTransactionModel transaction)
         {
             return (transaction.TransactionType) switch
             {

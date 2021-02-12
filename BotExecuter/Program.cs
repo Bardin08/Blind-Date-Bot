@@ -2,8 +2,7 @@
 using System.IO;
 
 using BlindDateBot;
-using BlindDateBot.Interfaces;
-
+using BlindDateBot.Abstractions;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;

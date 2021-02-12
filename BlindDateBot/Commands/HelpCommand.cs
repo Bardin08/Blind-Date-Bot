@@ -1,12 +1,11 @@
 ﻿using System.Threading.Tasks;
-
-using BlindDateBot.Data.Contexts;
-using BlindDateBot.Interfaces;
+using BlindDateBot.Abstractions;
+using BlindDateBot.Data.Abstractions;
+using BlindDateBot.Models;
 
 using Microsoft.Extensions.Logging;
 
 using Telegram.Bot;
-using Telegram.Bot.Types;
 
 namespace BlindDateBot.Commands
 {
@@ -14,11 +13,15 @@ namespace BlindDateBot.Commands
     {
         public string Name => "/help";
 
-        public async Task Execute(Message message, object transaction, ITelegramBotClient botClient, ILogger logger, SqlServerContext db)
+        public async Task Execute(object transaction, ITelegramBotClient botClient, ILogger logger, IDbContext db)
         {
-            logger.LogDebug("Help command was initiated by {username}({userid})", message.From.Username, message.From.Id);
+            var currentTransaction = transaction as BaseTransactionModel;
 
-            await botClient.SendTextMessageAsync(message.From.Id, Messages.HelpMessage);       
+            logger.LogDebug("Help command was initiated by {username}({userid})",
+                            currentTransaction.Message.From.Username,
+                            currentTransaction.Message.From.Id);
+
+            await botClient.SendTextMessageAsync(currentTransaction.Message.From.Id, Messages.HelpMessage);       
         }
     }
 }

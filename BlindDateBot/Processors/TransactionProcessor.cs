@@ -1,16 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-
-using BlindDateBot.Commands;
+using BlindDateBot.Abstractions;
+using BlindDateBot.Data.Abstractions;
 using BlindDateBot.Data.Contexts;
-using BlindDateBot.Interfaces;
+using BlindDateBot.Domain.Models;
 using BlindDateBot.Models;
 using BlindDateBot.Models.Enums;
 using BlindDateBot.Strategies;
 
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 
 using Telegram.Bot;
@@ -21,103 +20,69 @@ namespace BlindDateBot.Processors
     public class TransactionProcessor
     {
         private readonly ILogger _logger;
-        private readonly IConfiguration _config;
 
         private readonly ITelegramBotClient _botClient;
 
         private TransactionProcessStrategy _strategy;
-        private readonly Dictionary<TransactionProcessStrategy, ITransactionProcessingStrategy> _strategies;
+        private readonly Dictionary<TransactionProcessStrategy, ITransactionProcessStrategy> _strategies;
 
 
-        public TransactionProcessor(ITelegramBotClient botClient, ILogger logger, IConfiguration config)
-            : this(TransactionProcessStrategy.Default, botClient, logger, config)
+        public TransactionProcessor(ITelegramBotClient botClient, ILogger logger)
+            : this(TransactionProcessStrategy.Default, botClient, logger)
         {
         }
 
-        public TransactionProcessor(TransactionProcessStrategy strategy, ITelegramBotClient botClient, ILogger logger, IConfiguration config)
+        public TransactionProcessor(TransactionProcessStrategy strategy, ITelegramBotClient botClient, ILogger logger)
         {
             _logger = logger;
             _botClient = botClient;
-            _config = config;
-
 
             _strategy = strategy;
             _strategies = new();
-
-            StartCommand.RegistrationInitiated += RegistrationInitiated;
-            FeedbackCommamd.FeedbackTransactionInitiated += FeedbackTransactionInitiated;
-            ReportCommand.ReportInitiated += ReportInitiated;
         }
 
         public TransactionProcessStrategy Strategy 
         {
-            set
+            set 
             {
                 _strategy = value;
             }
         }
 
-        public async Task ProcessTransaction(Message message, object transaction, ITelegramBotClient botClient, ILogger logger, SqlServerContext db)
+        public async Task ProcessTransaction(Message message, object transaction, IDbContext db)
         {
-            if ((await db.Users.FirstOrDefaultAsync(u => u.TelegramId == message.From.Id))?.IsBlocked == true)
+            if (await IsUserBlock(message.From.Id, db))
             {
-                await botClient.SendTextMessageAsync(message.From.Id, Messages.YourAccountIsBlocked);
+                await _botClient.SendTextMessageAsync(message.From.Id, Messages.YourAccountBlocked);
                 return;
             }
 
-            var currentTransaction = transaction as TransactionBaseModel;
-
-            foreach (var id in currentTransaction.MessageIds)
-            {
-                await botClient.DeleteMessageAsync(message.Chat.Id, id);
-            }
-            currentTransaction.MessageIds.Clear();
-
-            await SelectStrategy().ProcessTransaction(message, transaction, botClient, logger, db);
+            var currentTransaction = transaction as BaseTransactionModel;
+            currentTransaction.Message = message;
+            await RemovePreviousMessages(message.From.Id, currentTransaction);
+            await SelectStrategy().ProcessTransaction(transaction, _botClient, _logger, db);
 
             _logger.LogDebug("Transaction {transactionId} is processing as {transactionType}",
                              currentTransaction.TransactionId, currentTransaction.TransactionType.ToString());
         }
 
-        private async void RegistrationInitiated(RegistrationTransactionModel transaction)
+        private static async Task<bool> IsUserBlock(int userTelegramId, IDbContext db)
         {
-            TransactionsContainer.AddTransaction(transaction);
-            Strategy = TransactionProcessStrategy.Registration;
-
-            await ProcessTransaction(new Message() { From = new User { Id = transaction.RecipientId } },
-                                     transaction,
-                                     _botClient,
-                                     _logger,
-                                     new SqlServerContext(_config["DB:MsSqlDb:ConnectionString"]));
+            return (await db.Set<UserModel>().FirstOrDefaultAsync(u => u.TelegramId == userTelegramId))?.IsBlocked == true;
         }
 
-        private async void FeedbackTransactionInitiated(FeedbackTransactionModel transaction)
+        private async Task RemovePreviousMessages(int chatId, BaseTransactionModel currentTransaction)
         {
-            TransactionsContainer.AddTransaction(transaction);
-            Strategy = TransactionProcessStrategy.Feedback;
-
-            await ProcessTransaction(new Message() { From = new User { Id = transaction.RecipientId } },
-                                     transaction,
-                                     _botClient,
-                                     _logger,
-                                      new SqlServerContext(_config["DB:MsSqlDb:ConnectionString"]));
+            foreach (var id in currentTransaction.MessageIds)
+            {
+                await _botClient.DeleteMessageAsync(chatId, id);
+            }
+            currentTransaction.MessageIds.Clear();
         }
 
-        private async void ReportInitiated(ReportTransactionModel transaction)
+        private ITransactionProcessStrategy SelectStrategy()
         {
-            TransactionsContainer.AddTransaction(transaction);
-            Strategy = TransactionProcessStrategy.Report;
-
-            await ProcessTransaction(new Message() { From = new User { Id = transaction.RecipientId } },
-                                     transaction,
-                                     _botClient,
-                                     _logger,
-                                     new SqlServerContext(_config["DB:MsSqlDb:ConnectionString"]));
-        }
-
-        private ITransactionProcessingStrategy SelectStrategy()
-        {
-            ITransactionProcessingStrategy strategy = null;
+            ITransactionProcessStrategy strategy = null;
 
             if (!_strategies.ContainsKey(_strategy))
             {

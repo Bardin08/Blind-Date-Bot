@@ -1,6 +1,6 @@
 ﻿using System.Threading.Tasks;
-
-using BlindDateBot.Data.Contexts;
+using BlindDateBot.Abstractions;
+using BlindDateBot.Data.Abstractions;
 using BlindDateBot.Models;
 
 using Microsoft.Extensions.Logging;
@@ -10,13 +10,17 @@ using Telegram.Bot.Types;
 
 namespace BlindDateBot.Behavior.FeedbackStates
 {
-    public class FeedbackMessageReceived : Interfaces.IFeedbackTransactionState
+    public class FeedbackMessageReceived : ITransactionState
     {
-        public async Task ProcessTransaction(Message message, object transaction, ITelegramBotClient botClient, ILogger logger, SqlServerContext db)
+        public async Task ProcessTransaction(object transaction, ITelegramBotClient botClient, ILogger logger, IDbContext db)
         {
-            await botClient.ForwardMessageAsync(new ChatId(Constants.FeedbackChannelId), message.From.Id, message.MessageId);
+            var currentTransaction = transaction as FeedbackTransactionModel;
 
-            (transaction as TransactionBaseModel).IsComplete = true;
+            await botClient.ForwardMessageAsync(new ChatId(Constants.FeedbackChannelId),
+                                                currentTransaction.Message.From.Id,
+                                                currentTransaction.Message.MessageId);
+
+            (transaction as BaseTransactionModel).IsComplete = true;
             return;
         }
     }

@@ -1,32 +1,28 @@
 ﻿using System.Threading.Tasks;
-
-using BlindDateBot.Data.Contexts;
+using BlindDateBot.Abstractions;
 using BlindDateBot.Domain.Models;
-using BlindDateBot.Interfaces;
 using BlindDateBot.Models;
 
 using Microsoft.Extensions.Logging;
 
 using Telegram.Bot;
-using Telegram.Bot.Types;
 using Telegram.Bot.Types.ReplyMarkups;
 using Microsoft.EntityFrameworkCore;
+using BlindDateBot.Data.Abstractions;
 
 namespace BlindDateBot.Behavior.RegistrationStages
 {
-    internal class ConfirmationReceived : IRegistrationTransactionState
+    internal class ConfirmationReceived : ITransactionState
     {
         public async Task ProcessTransaction(
-            Message message,
             object transaction,
             ITelegramBotClient botClient,
             ILogger logger,
-            SqlServerContext db)
+            IDbContext db)
         {
             var currentTransaction = transaction as RegistrationTransactionModel;
 
-            var isValid = await ValidateInputAndUpdateUserModel(message,
-                                                  currentTransaction,
+            var isValid = await ValidateInputAndUpdateUserModel(currentTransaction,
                                                   botClient,
                                                   logger,
                                                   db);
@@ -46,9 +42,9 @@ namespace BlindDateBot.Behavior.RegistrationStages
             }
         }
 
-        private static async void AddUserToDb(UserModel user, SqlServerContext db)
+        private static async void AddUserToDb(UserModel user, IDbContext db)
         {
-             var existingUser = await db.Users
+             var existingUser = await db.Set<UserModel>()
                 .FirstOrDefaultAsync(u => u.TelegramId == user.TelegramId);
 
             if (existingUser != null)
@@ -59,29 +55,28 @@ namespace BlindDateBot.Behavior.RegistrationStages
                 existingUser.InterlocutorGender = user.InterlocutorGender;
                 existingUser.IsFree = user.IsFree;
 
-                db.Update(existingUser);
+                db.Set<UserModel>().Update(existingUser);
             }
             else
             {
-                await db.AddAsync(user);
+                await db.Set<UserModel>().AddAsync(user);
             }
 
             await db.SaveChangesAsync();
         }
 
         private static async Task<bool> ValidateInputAndUpdateUserModel(
-            Message message,
             RegistrationTransactionModel transaction,
             ITelegramBotClient botClient,
             ILogger logger,
-            SqlServerContext db)
+            IDbContext db)
         {
-            if (message?.Text == null || !int.TryParse(message.Text, out int reply))
+            if (transaction.Message?.Text == null || !int.TryParse(transaction.Message.Text, out int reply))
             {
                 await botClient.SendTextMessageAsync(transaction.RecipientId, Messages.SomethingWentWrong);
 
                 transaction.TransactionState = new RegistrationInitiated();
-                await transaction.TransactionState.ProcessTransaction(message, transaction, botClient, logger, db);
+                await transaction.TransactionState.ProcessTransaction(transaction, botClient, logger, db);
                 return false;
             }
 
@@ -94,7 +89,7 @@ namespace BlindDateBot.Behavior.RegistrationStages
             if (!isConfirmed)
             {
                 transaction.TransactionState = new RegistrationInitiated();
-                await transaction.TransactionState.ProcessTransaction(message, transaction, botClient, logger, db);
+                await transaction.TransactionState.ProcessTransaction(transaction, botClient, logger, db);
                 return false;
             }
 

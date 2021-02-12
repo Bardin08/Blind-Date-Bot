@@ -2,12 +2,10 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
-
+using BlindDateBot.Abstractions;
 using BlindDateBot.Data.Contexts;
 using BlindDateBot.Domain.Models;
-using BlindDateBot.Interfaces;
 using BlindDateBot.Models;
-using BlindDateBot.Options;
 using BlindDateBot.Processors;
 
 using Microsoft.EntityFrameworkCore;
@@ -22,12 +20,12 @@ namespace BlindDateBot
     public class BlindDateBot
     {
         private readonly ITelegramBotClient _botClient;
-        private readonly BlindDateBotOptions _options;
 
         private readonly ILogger<BlindDateBot> _logger;
         private readonly IConfiguration _config;
 
-        private TelegramUdpateProcessor _updateProcessor;
+        private readonly TelegramUdpateProcessor _updateProcessor;
+        private readonly EventsProcessor _eventsProcessor;
 
         public BlindDateBot(IBlindDateBotClient botClient, ILogger<BlindDateBot> logger, IConfiguration config)
         {
@@ -35,9 +33,9 @@ namespace BlindDateBot
             _config = config;
 
             _botClient = botClient.BotClient;
-            _options = botClient.Options;
 
             _updateProcessor = new(_botClient, logger, config);
+            _eventsProcessor = new EventsProcessor(botClient.BotClient, logger, config);
 
             foreach (var date in LoadDatesFromDatabase())
             {
@@ -69,6 +67,5 @@ namespace BlindDateBot
                 .Include(d => d.SecondUser)
                 .Where(d => d.IsActive == true).ToList();
         }
-
     }
 }

@@ -1,8 +1,11 @@
-﻿namespace BlindDateBot.Models
+﻿using Telegram.Bot.Types;
+
+namespace BlindDateBot.Models
 {
-    public class CommandTransactionModel : TransactionBaseModel
+    public class CommandTransactionModel : BaseTransactionModel
     {
-        public CommandTransactionModel(int recepientId) : base(recepientId)
+        public CommandTransactionModel(Message message) 
+            : base(message)
         {
             TransactionType = Enums.TransactionType.Command;
         }

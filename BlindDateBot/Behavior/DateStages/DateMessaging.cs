@@ -1,8 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-
-using BlindDateBot.Data.Contexts;
+using BlindDateBot.Abstractions;
+using BlindDateBot.Data.Abstractions;
 using BlindDateBot.Domain.Models;
 
 using Microsoft.Extensions.Logging;
@@ -14,9 +14,9 @@ using Telegram.Bot.Types.InputFiles;
 
 namespace BlindDateBot.Behavior.DateStages
 {
-    public class DateFound : Interfaces.IDateTransactionState
+    public class DateMessaging : ITransactionState
     {
-        public async Task ProcessTransaction(Message message, object transaction, ITelegramBotClient botClient, ILogger logger, SqlServerContext db)
+        public async Task ProcessTransaction(object transaction, ITelegramBotClient botClient, ILogger logger, IDbContext db)
         {
             var currentTransaction = transaction as Models.DateTransactionModel;
 
@@ -28,16 +28,16 @@ namespace BlindDateBot.Behavior.DateStages
 
             var messageObject = new 
             {
-                From = users.Where(u => u.TelegramId == message.From.Id).First(),
-                To = users.Where(u => u.TelegramId != message.From.Id).First(),
+                From = users.Where(u => u.TelegramId == currentTransaction.Message.From.Id).First(),
+                To = users.Where(u => u.TelegramId != currentTransaction.Message.From.Id).First(),
             };
 
-            ForwardMessage(message, messageObject.To, botClient);
+            ForwardMessage(currentTransaction.Message, messageObject.To, botClient);
         }
 
-        private async void ForwardMessage(Message message, UserModel recipient, ITelegramBotClient botClient)
+        private static async void ForwardMessage(Message message, UserModel recipient, ITelegramBotClient botClient)
         {
-            var r = message.Type switch
+            _ = message.Type switch
             {
                 MessageType.Unknown => await botClient.SendTextMessageAsync(recipient.TelegramId, "Bad message!"),
                 MessageType.Text => await botClient.SendTextMessageAsync(recipient.TelegramId, message.Text),

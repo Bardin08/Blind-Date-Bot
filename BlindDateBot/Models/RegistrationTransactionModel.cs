@@ -1,19 +1,15 @@
-﻿using BlindDateBot.Behavior.RegistrationStages;
+﻿using BlindDateBot.Abstractions;
+using BlindDateBot.Behavior.RegistrationStages;
 using BlindDateBot.Domain.Models;
-using BlindDateBot.Interfaces;
+
+using Telegram.Bot.Types;
 
 namespace BlindDateBot.Models
 {
-    public class RegistrationTransactionModel : TransactionBaseModel
+    public class RegistrationTransactionModel : BaseTransactionModel
     {
-        public string UserFirstName { get; set; }
-
-        public UserModel User { get; set; }
-        
-        public IRegistrationTransactionState TransactionState { get; set; }
-
-        public RegistrationTransactionModel(int recepientId, string username, string firstname) 
-            : base(recepientId)
+        public RegistrationTransactionModel(Message message, string username, string firstname)
+            : base(message)
         {
             UserFirstName = firstname;
 
@@ -21,12 +17,18 @@ namespace BlindDateBot.Models
 
             User = new UserModel
             {
-                TelegramId = recepientId,
+                TelegramId = RecipientId,
                 Username = username,
                 IsFree = true
             };
-            
+
             TransactionState = new RegistrationInitiated();
         }
+
+        public string UserFirstName { get; set; }
+
+        public UserModel User { get; set; }
+        
+        public ITransactionState TransactionState { get; set; }
     }
 }

@@ -43,9 +43,9 @@ namespace BlindDateBot
         {
             lock (_transactions)
             {
-                _transactions.RemoveAll(t => (t as TransactionBaseModel).IsComplete);
+                _transactions.RemoveAll(t => (t as BaseTransactionModel).IsComplete);
 
-                return _transactions.FirstOrDefault(t => (t as TransactionBaseModel)!.RecipientId.Equals(recipientId));
+                return _transactions.FirstOrDefault(t => (t as BaseTransactionModel)!.RecipientId.Equals(recipientId));
             }
         }
 #nullable disable
@@ -57,7 +57,7 @@ namespace BlindDateBot
                 if (transaction != null)
                 {
                     _transactions
-                        .RemoveAll(t => (t as TransactionBaseModel).RecipientId == (transaction as TransactionBaseModel).RecipientId);
+                        .RemoveAll(t => (t as BaseTransactionModel).RecipientId == (transaction as BaseTransactionModel).RecipientId);
 
                     _transactions.Add(transaction);
                 }

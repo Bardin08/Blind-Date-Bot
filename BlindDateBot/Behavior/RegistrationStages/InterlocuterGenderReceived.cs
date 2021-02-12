@@ -1,9 +1,9 @@
 ﻿using System.Text;
 using System.Threading.Tasks;
-
+using BlindDateBot.Abstractions;
+using BlindDateBot.Data.Abstractions;
 using BlindDateBot.Data.Contexts;
 using BlindDateBot.Domain.Models.Enums;
-using BlindDateBot.Interfaces;
 using BlindDateBot.Models;
 
 using Microsoft.Extensions.Logging;
@@ -14,19 +14,17 @@ using Telegram.Bot.Types.ReplyMarkups;
 
 namespace BlindDateBot.Behavior.RegistrationStages
 {
-    internal class InterlocuterGenderReceived : IRegistrationTransactionState
+    internal class InterlocuterGenderReceived : ITransactionState
     {
         public async Task ProcessTransaction(
-            Message message,
             object transaction,
             ITelegramBotClient botClient,
             ILogger logger,
-            SqlServerContext db)
+            IDbContext db)
         {
             var currentTransaction = transaction as RegistrationTransactionModel;
 
-            ValidateInputAndUpdateUserModel(message,
-                                            currentTransaction,
+            ValidateInputAndUpdateUserModel(currentTransaction,
                                             botClient,
                                             logger,
                                             db);
@@ -46,18 +44,17 @@ namespace BlindDateBot.Behavior.RegistrationStages
         }
 
         private static async void ValidateInputAndUpdateUserModel(
-            Message message,
             RegistrationTransactionModel transaction,
             ITelegramBotClient botClient,
-            ILogger logger, 
-            SqlServerContext db)
+            ILogger logger,
+            IDbContext db)
         {
-            if (message?.Text == null || !int.TryParse(message.Text, out int genderId))
+            if (transaction.Message?.Text == null || !int.TryParse(transaction.Message.Text, out int genderId))
             {
                 await botClient.SendTextMessageAsync(transaction.RecipientId, Messages.SomethingWentWrong);
 
                 transaction.TransactionState = new RegistrationInitiated();
-                await transaction.TransactionState.ProcessTransaction(message, transaction, botClient, logger, db);
+                await transaction.TransactionState.ProcessTransaction(transaction, botClient, logger, db);
                 return;
             }
 

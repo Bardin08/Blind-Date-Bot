@@ -1,20 +1,19 @@
 ﻿using System.Threading.Tasks;
-
-using BlindDateBot.Data.Contexts;
+using BlindDateBot.Abstractions;
+using BlindDateBot.Data.Abstractions;
 using BlindDateBot.Models;
 
 using Microsoft.Extensions.Logging;
 
 using Telegram.Bot;
-using Telegram.Bot.Types;
 
 namespace BlindDateBot.Strategies
 {
-    public class RegistrationProcessStrategy : Interfaces.ITransactionProcessingStrategy
+    public class RegistrationProcessStrategy : ITransactionProcessStrategy
     {
-        public async Task ProcessTransaction(Message message, object transaction, ITelegramBotClient botClient, ILogger logger, SqlServerContext db)
+        public async Task ProcessTransaction(object transaction, ITelegramBotClient botClient, ILogger logger, IDbContext db)
         {
-            await (transaction as RegistrationTransactionModel).TransactionState.ProcessTransaction(message, transaction, botClient, logger, db);
+            await (transaction as RegistrationTransactionModel).TransactionState.ProcessTransaction(transaction, botClient, logger, db);
         }
     }
 }

@@ -1,17 +1,20 @@
-﻿using BlindDateBot.Behavior.DateStages;
+﻿using BlindDateBot.Abstractions;
+using BlindDateBot.Behavior.DateStages;
 using BlindDateBot.Domain.Models;
-using BlindDateBot.Interfaces;
+
+using Telegram.Bot.Types;
 
 namespace BlindDateBot.Models
 {
-    public class DateTransactionModel : TransactionBaseModel
+    public class DateTransactionModel : BaseTransactionModel
     {
-        public const int RecepientIdForDateTransaction = -1;
+        public const int RecipientIdForDateTransaction = -1;
 
         public DateTransactionModel(DateModel dateModel)
-            : base(RecepientIdForDateTransaction)
+            : base(new Message() { From = new User() { Id = RecipientIdForDateTransaction } })
         {
-            State = new DateFound();
+            RecipientId = RecipientIdForDateTransaction;
+            State = new DateMessaging();
             TransactionType = Enums.TransactionType.DateMessaging;
 
             TransactionId = dateModel.Id;
@@ -20,6 +23,6 @@ namespace BlindDateBot.Models
 
         public DateModel Date { get; set; }
         
-        public IDateTransactionState State { get; set; }
+        public ITransactionState State { get; set; }
     }
 }

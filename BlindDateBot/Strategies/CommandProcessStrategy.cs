@@ -3,26 +3,23 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
-
-using BlindDateBot.Data.Contexts;
-using BlindDateBot.Data.Interfaces;
-using BlindDateBot.Interfaces;
+using BlindDateBot.Abstractions;
+using BlindDateBot.Data.Abstractions;
 using BlindDateBot.Models;
 
 using Microsoft.Extensions.Logging;
 
 using Telegram.Bot;
-using Telegram.Bot.Types;
 
 namespace BlindDateBot.Strategies
 {
-    public class CommandProcessStrategy : ITransactionProcessingStrategy
+    public class CommandProcessStrategy : ITransactionProcessStrategy
     {
-        public async Task ProcessTransaction(Message message, object transaction, ITelegramBotClient botClient, ILogger logger, SqlServerContext db)
+        public async Task ProcessTransaction(object transaction, ITelegramBotClient botClient, ILogger logger, IDbContext db)
         {
             var currentTransaction = transaction as CommandTransactionModel;
 
-            if (message?.Text == null)
+            if (currentTransaction.Message?.Text == null)
             {
                 await botClient.SendTextMessageAsync(currentTransaction.RecipientId, Messages.CommandNotFoundMessage);
                 return;
@@ -30,11 +27,11 @@ namespace BlindDateBot.Strategies
 
             var commands = LoadCommands();
 
-            var requiredCommand = commands?.Find(c => c.Name == message.Text);
+            var requiredCommand = commands?.Find(c => c.Name == currentTransaction.Message.Text);
 
             if (requiredCommand != null)
             {
-                await requiredCommand.Execute(message, currentTransaction, botClient, logger, db);
+                await requiredCommand.Execute(currentTransaction, botClient, logger, db);
             }
             else
             {
@@ -42,7 +39,7 @@ namespace BlindDateBot.Strategies
             }
         }
 
-        private List<IBotCommand> LoadCommands()
+        private static List<IBotCommand> LoadCommands()
         {
             var commands = new List<IBotCommand>();
             var foundCommands = Assembly.GetExecutingAssembly().GetTypes()
