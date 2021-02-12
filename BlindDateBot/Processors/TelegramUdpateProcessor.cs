@@ -65,11 +65,11 @@ namespace BlindDateBot.Processors
             if (message.Text?.StartsWith("/") == true)
             {
                 strategy = TransactionProcessStrategy.Command;
-                userTransaction = new CommandTransactionModel(message.From.Id);
+                userTransaction = new CommandTransactionModel(message);
             }
             else if (userTransaction != null)
             {
-                strategy = SelectStrategy(userTransaction as TransactionBaseModel);
+                strategy = SelectStrategy(userTransaction as BaseTransactionModel);
             }
 
             if (userTransaction != null)
@@ -128,7 +128,7 @@ namespace BlindDateBot.Processors
             }
         }
 
-        private static TransactionProcessStrategy SelectStrategy(TransactionBaseModel transaction)
+        private static TransactionProcessStrategy SelectStrategy(BaseTransactionModel transaction)
         {
             return (transaction.TransactionType) switch
             {

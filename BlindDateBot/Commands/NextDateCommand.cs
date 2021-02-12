@@ -2,7 +2,7 @@
 using System.Linq;
 using System.Threading.Tasks;
 using BlindDateBot.Abstractions;
-using BlindDateBot.Data.Contexts;
+using BlindDateBot.Data.Abstractions;
 using BlindDateBot.Domain.Models;
 using BlindDateBot.Models;
 
@@ -10,7 +10,6 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 
 using Telegram.Bot;
-using Telegram.Bot.Types;
 
 namespace BlindDateBot.Commands
 {
@@ -20,11 +19,13 @@ namespace BlindDateBot.Commands
 
         public string Name => "/next_date";
 
-        public async Task Execute(Message message, object transaction, ITelegramBotClient botClient, ILogger logger, SqlServerContext db)
+        public async Task Execute(object transaction, ITelegramBotClient botClient, ILogger logger, IDbContext db)
         {
-            logger.LogDebug("Next date command was initiated by {username}({userid})", message.From.Username, message.From.Id);
+            var currentTransaction = transaction as BaseTransactionModel;
 
-            var currentTransaction = transaction as TransactionBaseModel;
+            logger.LogDebug("Next date command was initiated by {username}({userid})",
+                            currentTransaction.Message.From.Username,
+                            currentTransaction.Message.From.Id);
 
             if (TransactionsContainer.DateForUserExists(currentTransaction.RecipientId))
             {
@@ -34,7 +35,7 @@ namespace BlindDateBot.Commands
 
             await botClient.SendTextMessageAsync(currentTransaction.RecipientId, Messages.DateSearchText);
 
-            var user = await db.Users.FirstOrDefaultAsync(u => u.TelegramId == currentTransaction.RecipientId);
+            var user = await db.Set<UserModel>().FirstOrDefaultAsync(u => u.TelegramId == currentTransaction.RecipientId);
 
             if (user == null)
             {
@@ -48,13 +49,15 @@ namespace BlindDateBot.Commands
 
             Random rnd = new();
 
-            var possibleInterlocutors = await db.Users.Where(u => u.IsFree == true
+            var possibleInterlocutors = await db.Set<UserModel>().Where(u => u.IsFree == true
                                                            && user.InterlocutorGender == u.Gender
                                                            && user.Gender == u.InterlocutorGender
                                                            && u.Id != user.Id
                                                            && u.IsVisible).ToListAsync();
 
-            var interlocutor = possibleInterlocutors[rnd.Next(0, possibleInterlocutors.Count - 1)];
+            var interlocutor = possibleInterlocutors[rnd.Next(0, possibleInterlocutors.Count == 0 
+                ? possibleInterlocutors.Count 
+                : possibleInterlocutors.Count - 1)];
             if (interlocutor == null)
             {
                 return;
@@ -73,7 +76,7 @@ namespace BlindDateBot.Commands
             interlocutor.IsFree = false;
             db.Update(interlocutor);
 
-            await db.Dates.AddAsync(dateModel);
+            await db.Set<DateModel>().AddAsync(dateModel);
             await db.SaveChangesAsync();
 
             logger.LogDebug("New data started. Members: {firstuser}, {seconduser}", user, interlocutor);

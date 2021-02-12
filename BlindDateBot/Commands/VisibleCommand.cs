@@ -1,13 +1,13 @@
 ﻿using System.Threading.Tasks;
 using BlindDateBot.Abstractions;
-using BlindDateBot.Data.Contexts;
+using BlindDateBot.Data.Abstractions;
+using BlindDateBot.Domain.Models;
 using BlindDateBot.Models;
 
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 
 using Telegram.Bot;
-using Telegram.Bot.Types;
 
 namespace BlindDateBot.Commands
 {
@@ -15,13 +15,13 @@ namespace BlindDateBot.Commands
     {
         public string Name => "/visible";
 
-        public async Task Execute(Message message, object transaction, ITelegramBotClient botClient, ILogger logger, SqlServerContext db)
+        public async Task Execute(object transaction, ITelegramBotClient botClient, ILogger logger, IDbContext db)
         {
-            var currentTransaction = transaction as TransactionBaseModel;
+            var currentTransaction = transaction as BaseTransactionModel;
 
-            logger.LogDebug("User {username}({userId}) was changed its visible", message.From.Username, message.From.Id);
+            logger.LogDebug("User {username}({userId}) was changed its visible", currentTransaction.Message.From.Username, currentTransaction.Message.From.Id);
 
-            var user = await db.Users.FirstOrDefaultAsync(u => u.TelegramId == currentTransaction.RecipientId);
+            var user = await db.Set<UserModel>().FirstOrDefaultAsync(u => u.TelegramId == currentTransaction.RecipientId);
 
             user.IsVisible = !user.IsVisible;
 

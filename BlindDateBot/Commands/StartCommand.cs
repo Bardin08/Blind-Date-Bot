@@ -1,6 +1,9 @@
 ﻿using System.Threading.Tasks;
 using BlindDateBot.Abstractions;
+using BlindDateBot.Data.Abstractions;
 using BlindDateBot.Data.Contexts;
+using BlindDateBot.Models;
+
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 
@@ -15,17 +18,23 @@ namespace BlindDateBot.Commands
 
         public string Name => "/start";
 
-        public async Task Execute(Message message, object transaction, ITelegramBotClient botClient, ILogger logger, SqlServerContext db)
+        public async Task Execute(object transaction, ITelegramBotClient botClient, ILogger logger, IDbContext db)
         {
-            logger.LogDebug("Start command was initiated by {username}({userid})", message.From.Username, message.From.Id);
+            var currentTransaction = transaction as CommandTransactionModel;
 
-            if (TransactionsContainer.DateForUserExists(message.From.Id))
+            logger.LogDebug("Start command was initiated by {username}({userid})",
+                            currentTransaction.Message.From.Username,
+                            currentTransaction.Message.From.Id);
+
+            if (TransactionsContainer.DateForUserExists(currentTransaction.Message.From.Id))
             {
-                await botClient.SendTextMessageAsync(message.From.Id, Messages.YouHaveAnActiveDate);
+                await botClient.SendTextMessageAsync(currentTransaction.Message.From.Id, Messages.YouHaveAnActiveDate);
                 return;
             }
 
-            var registrationTransaction = new Models.RegistrationTransactionModel(message.From.Id, message.From.Username, message.From.FirstName);
+            var registrationTransaction = new Models.RegistrationTransactionModel(currentTransaction.Message,
+                                                                                  currentTransaction.Message.From.Username,
+                                                                                  currentTransaction.Message.From.FirstName);
             RegistrationInitiated?.Invoke(registrationTransaction);
             return;
         }

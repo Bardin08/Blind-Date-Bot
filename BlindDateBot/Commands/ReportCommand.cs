@@ -1,13 +1,12 @@
 ﻿using System.Threading.Tasks;
 using BlindDateBot.Abstractions;
-using BlindDateBot.Data.Contexts;
+using BlindDateBot.Data.Abstractions;
 using BlindDateBot.Delegates;
 using BlindDateBot.Models;
 
 using Microsoft.Extensions.Logging;
 
 using Telegram.Bot;
-using Telegram.Bot.Types;
 
 namespace BlindDateBot.Commands
 {
@@ -17,19 +16,20 @@ namespace BlindDateBot.Commands
 
         public string Name => "/report";
 
-        public async Task Execute(Message message, object transaction, ITelegramBotClient botClient, ILogger logger, SqlServerContext db)
+        public async Task Execute(object transaction, ITelegramBotClient botClient, ILogger logger, IDbContext db)
         {
-            var currentDate = TransactionsContainer.GetDateTransactionByRecipientId(message.From.Id);
+            var currentTransaction = transaction as BaseTransactionModel;
+            var currentDate = TransactionsContainer.GetDateTransactionByRecipientId(currentTransaction.Message.From.Id);
             
             if (currentDate == null)
             {
-                await botClient.SendTextMessageAsync(message.From.Id, Messages.NoActiveDate);
+                await botClient.SendTextMessageAsync(currentTransaction.Message.From.Id, Messages.NoActiveDate);
                 return;
             }
 
-            ReportTransactionModel transactionModel = new(message.From.Id)
+            ReportTransactionModel transactionModel = new(currentTransaction.Message)
             {
-                UserWithComplaint = currentDate.Date.FirstUser.TelegramId != message.From.Id ? currentDate.Date.FirstUser : currentDate.Date.SecondUser
+                UserWithComplaint = currentDate.Date.FirstUser.TelegramId != currentTransaction.Message.From.Id ? currentDate.Date.FirstUser : currentDate.Date.SecondUser
             };
 
             ReportInitiated?.Invoke(transactionModel);

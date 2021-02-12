@@ -1,8 +1,8 @@
 ﻿using System.Threading.Tasks;
-using BlindDateBot.Data.Contexts;
+
+using BlindDateBot.Data.Abstractions;
 using Microsoft.Extensions.Logging;
 using Telegram.Bot;
-using Telegram.Bot.Types;
 
 namespace BlindDateBot.Abstractions
 {
@@ -10,6 +10,6 @@ namespace BlindDateBot.Abstractions
     {
         public string Name { get; }
 
-        public Task Execute(Message message, object transaction, ITelegramBotClient botClient, ILogger logger, SqlServerContext db);
+        public Task Execute(object transaction, ITelegramBotClient botClient, ILogger logger, IDbContext db);
     }
 }

@@ -1,24 +1,22 @@
 ﻿using System.Threading.Tasks;
 using BlindDateBot.Abstractions;
-using BlindDateBot.Data.Contexts;
+using BlindDateBot.Data.Abstractions;
 using BlindDateBot.Models;
 
 using Microsoft.Extensions.Logging;
 
 using Telegram.Bot;
-using Telegram.Bot.Types;
 using Telegram.Bot.Types.ReplyMarkups;
 
 namespace BlindDateBot.Behavior.RegistrationStages
 {
-    public class RegistrationInitiated : IRegistrationTransactionState
+    public class RegistrationInitiated : ITransactionState
     {
         public async Task ProcessTransaction(
-            Message message,
             object transaction,
             ITelegramBotClient botClient,
             ILogger logger,
-            SqlServerContext db)
+            IDbContext db)
         {
             var currentTransaction = transaction as RegistrationTransactionModel;
 

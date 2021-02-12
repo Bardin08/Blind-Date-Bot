@@ -1,18 +1,17 @@
 ﻿using System.Threading.Tasks;
 using BlindDateBot.Abstractions;
-using BlindDateBot.Data.Contexts;
+using BlindDateBot.Data.Abstractions;
 using BlindDateBot.Models;
 
 using Microsoft.Extensions.Logging;
 
 using Telegram.Bot;
-using Telegram.Bot.Types;
 
 namespace BlindDateBot.Behavior.FeedbackStates
 {
-    public class FeedbackInitiated : IFeedbackTransactionState
+    public class FeedbackInitiated : ITransactionState
     {
-        public async Task ProcessTransaction(Message message, object transaction, ITelegramBotClient botClient, ILogger logger, SqlServerContext db)
+        public async Task ProcessTransaction(object transaction, ITelegramBotClient botClient, ILogger logger, IDbContext db)
         {
             FeedbackTransactionModel currentTransaction = transaction as FeedbackTransactionModel;
 

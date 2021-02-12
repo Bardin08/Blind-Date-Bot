@@ -1,18 +1,20 @@
 ﻿using BlindDateBot.Abstractions;
 using BlindDateBot.Behavior.FeedbackStates;
 
+using Telegram.Bot.Types;
+
 namespace BlindDateBot.Models
 {
-    public class FeedbackTransactionModel : TransactionBaseModel
+    public class FeedbackTransactionModel : BaseTransactionModel
     {
-        public FeedbackTransactionModel(int recepientId)
-            : base(recepientId)
+        public FeedbackTransactionModel(Message message)
+            : base(message)
         {
             TransactionType = Enums.TransactionType.Feedback;
 
             TransactionState = new FeedbackInitiated();
         }
 
-        public IFeedbackTransactionState TransactionState { get; set; }
+        public ITransactionState TransactionState { get; set; }
     }
 }

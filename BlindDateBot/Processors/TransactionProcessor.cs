@@ -2,7 +2,9 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using BlindDateBot.Abstractions;
+using BlindDateBot.Data.Abstractions;
 using BlindDateBot.Data.Contexts;
+using BlindDateBot.Domain.Models;
 using BlindDateBot.Models;
 using BlindDateBot.Models.Enums;
 using BlindDateBot.Strategies;
@@ -47,7 +49,7 @@ namespace BlindDateBot.Processors
             }
         }
 
-        public async Task ProcessTransaction(Message message, object transaction, SqlServerContext db)
+        public async Task ProcessTransaction(Message message, object transaction, IDbContext db)
         {
             if (await IsUserBlock(message.From.Id, db))
             {
@@ -55,20 +57,21 @@ namespace BlindDateBot.Processors
                 return;
             }
 
-            var currentTransaction = transaction as TransactionBaseModel;
+            var currentTransaction = transaction as BaseTransactionModel;
+            currentTransaction.Message = message;
             await RemovePreviousMessages(message.From.Id, currentTransaction);
-            await SelectStrategy().ProcessTransaction(message, transaction, _botClient, _logger, db);
+            await SelectStrategy().ProcessTransaction(transaction, _botClient, _logger, db);
 
             _logger.LogDebug("Transaction {transactionId} is processing as {transactionType}",
                              currentTransaction.TransactionId, currentTransaction.TransactionType.ToString());
         }
 
-        private async Task<bool> IsUserBlock(int userTelegramId, SqlServerContext db)
+        private static async Task<bool> IsUserBlock(int userTelegramId, IDbContext db)
         {
-            return (await db.Users.FirstOrDefaultAsync(u => u.TelegramId == userTelegramId))?.IsBlocked == true;
+            return (await db.Set<UserModel>().FirstOrDefaultAsync(u => u.TelegramId == userTelegramId))?.IsBlocked == true;
         }
 
-        private async Task RemovePreviousMessages(int chatId, TransactionBaseModel currentTransaction)
+        private async Task RemovePreviousMessages(int chatId, BaseTransactionModel currentTransaction)
         {
             foreach (var id in currentTransaction.MessageIds)
             {
