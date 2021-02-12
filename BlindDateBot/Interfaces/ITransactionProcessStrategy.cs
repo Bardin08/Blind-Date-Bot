@@ -9,7 +9,7 @@ using Telegram.Bot.Types;
 
 namespace BlindDateBot.Interfaces
 {
-    public interface ITransactionProcessingStrategy
+    public interface ITransactionProcessStrategy
     {
         Task ProcessTransaction(Message message, object transaction, ITelegramBotClient botClient, ILogger logger, SqlServerContext db);
     }

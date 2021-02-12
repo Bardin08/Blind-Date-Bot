@@ -44,6 +44,7 @@ namespace BlindDateBot.Commands
             db.Update(user);
 
             user = db.Users.Find(date.SecondUser.Id);
+            user.IsVisible = false;
             user.IsFree = true;
             db.Update(user);
 

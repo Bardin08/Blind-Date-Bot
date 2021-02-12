@@ -5,7 +5,6 @@ using System.Reflection;
 using System.Threading.Tasks;
 
 using BlindDateBot.Data.Contexts;
-using BlindDateBot.Data.Interfaces;
 using BlindDateBot.Interfaces;
 using BlindDateBot.Models;
 
@@ -16,7 +15,7 @@ using Telegram.Bot.Types;
 
 namespace BlindDateBot.Strategies
 {
-    public class CommandProcessStrategy : ITransactionProcessingStrategy
+    public class CommandProcessStrategy : ITransactionProcessStrategy
     {
         public async Task ProcessTransaction(Message message, object transaction, ITelegramBotClient botClient, ILogger logger, SqlServerContext db)
         {
@@ -42,7 +41,7 @@ namespace BlindDateBot.Strategies
             }
         }
 
-        private List<IBotCommand> LoadCommands()
+        private static List<IBotCommand> LoadCommands()
         {
             var commands = new List<IBotCommand>();
             var foundCommands = Assembly.GetExecutingAssembly().GetTypes()
