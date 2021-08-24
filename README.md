@@ -1,2 +1,2 @@
 # Blind-Date-Bot
-Telegram bot for a blind date
+Telegram bot for blind dates
